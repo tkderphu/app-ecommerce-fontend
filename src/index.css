@@ -1,5 +1,6 @@
 @import url("../src/assets/lib/bootstrap.min.css");
 @import url("../src/assets/lib/style.css");
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
