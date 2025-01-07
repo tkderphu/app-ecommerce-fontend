@@ -1,4 +1,10 @@
+import { useState } from "react"
+import ChatSupportComponent from "../page/realtime/ChatSupportComponent"
+
 function FooterComponent() {
+
+    const [enableChat, setEnableChat] = useState(false)
+
     return (
         <div>
             <div className="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
@@ -84,8 +90,12 @@ function FooterComponent() {
                     </div>
                 </div>
             </div>
-            <a href="#" className="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i className="fa fa-arrow-up"></i></a>
-
+            <a id="show-chat" className="btn btn-primary border-3 border-primary show-chat-support" 
+                onClick={() => {
+                    setEnableChat(!enableChat)
+                }}
+            >Chat</a>
+            <ChatSupportComponent enableChat = {enableChat}/>
         </div>
     )
 }
