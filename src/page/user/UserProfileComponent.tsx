@@ -1,3 +1,4 @@
+import ButtonModalComponent from "../../component/ButtonModalComponent"
 import FooterComponent from "../../layout/FooterComponent"
 import HeaderComponent from "../../layout/HeaderComponent"
 
@@ -27,14 +28,39 @@ function UserProfileComponent() {
                         </div>
                         <hr /><br />
                         <ul className="list-group">
-                            <li className="list-group-item text-muted">Hoạt động <i className="fa fa-dashboard fa-1x"></i></li>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                <li className="list-group-item text-right"><span className="pull-left"><strong>Đánh giá: </strong></span>
-                                    35345
-                                </li>
-                            </a>
-                            <li className="list-group-item text-right"><span className="pull-left"><strong>Theo dõi: </strong></span> 78
-                            </li>
+                            <li className="list-group-item text-muted">Activity <i className="fa fa-dashboard fa-1x"></i></li>
+                            <br/>
+                            <ButtonModalComponent
+                                body={"test"}
+                                id="test"
+                                nameButton="Comments"
+                                title="Your comments"
+                                key={"1"}
+                            />
+                            <br/>
+                            <ButtonModalComponent
+                                body={"test"}
+                                id="test1"
+                                nameButton="Orders"
+                                title="Your Orders"
+                                key={"2"}
+                            />
+                            <br/>
+                            <ButtonModalComponent
+                                body={"test"}
+                                id="test5"
+                                nameButton="Notifications"
+                                title="Your Notifications"
+                                key={"3"}
+                            />
+                            <br/>
+                            <ButtonModalComponent
+                                body={"test"}
+                                id="exampleModal"
+                                nameButton="Followers"
+                                title="Your Followers"
+                                key={"4"}
+                            />
                         </ul>
                     </div>
                     <div className="col-sm-9">
