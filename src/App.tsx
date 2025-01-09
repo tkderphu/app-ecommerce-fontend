@@ -13,13 +13,15 @@ import ChatSupportComponent from './page/realtime/ChatSupportComponent'
 import LiveStreamPageComponent from './page/realtime/LivestreamComponent'
 import CartPageComponent from './page/trade/cart/CartComponent'
 import CheckoutPageComponent from './page/trade/order/CheckoutPageComponent'
+import OrderLogPageComponent from './page/trade/order/orderlog/OrderLogComponent'
+import OrderSimpleComponent from './page/trade/order/OrderSimpleComponent'
 import UserProfileComponent from './page/user/UserProfileComponent'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <UserProfileComponent/>
+    <OrderSimpleComponent/>
 
   )
 }
