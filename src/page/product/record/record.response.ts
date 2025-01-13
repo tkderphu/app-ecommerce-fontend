@@ -1,5 +1,6 @@
 export class AppProductSpuSimpleRespVO {
     id?: number
+    name?: string
     maxPrice?: number
     minPrice?: number
     sendFrom?: string

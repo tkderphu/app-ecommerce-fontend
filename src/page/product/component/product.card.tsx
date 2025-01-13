@@ -16,37 +16,23 @@ function ProuctCardComponent(props: Props) {
                 <div className="text-white bg-secondary px-3 py-1 rounded position-absolute"
                     style={{ top: "10px", right: "10px" }}
                 >
-                    456456456
-                </div>
-                <div className="text-white bg-secondary px-3 py-1 rounded position-absolute"
-                    style={{ top: "10px", right: "10px" }}
-                >
                     4*
                 </div>
                 <div className="p-4 border border-secondary border-top-0 rounded-bottom">
                     <div className="col-12 text-truncate h4">
-                        Tên: 4
+                        {props.productSpu?.name}
                     </div>
-                    <div className="col-12 text-truncate">
-                        Mô tả: 4
-                    </div>
-                    <div className="d-flex justify-content-between flex-lg-wrap mb-1">
-                        <p className="text-dark fs-5 fw-bold mb-0">Giá: trt45t</p>
-                    </div>
-                    <p className="mb-1" style={{ color: "red", fontWeight: "bold" }}>Đã bán: </p>
-                    <div className="d-flex justify-content-between flex-lg-wrap mb-4">
-                        <a
+                    <p className="text-dark fs-5 fw-bold mb-0">{props.productSpu?.minPrice} - {props.productSpu?.maxPrice}</p>
+                    <div className="d-flex justify-content-around mb-2">
+                        <p className="mb-1" style={{ color: "red", fontWeight: "bold" }}>From: {props.productSpu?.sold}</p>
+                        <p className="mb-1" style={{ color: "red", fontWeight: "bold" }}>Sold: {props.productSpu?.sold}</p>
 
-                            style={{ cursor: "pointer" }}
-                            className="fs-5 fw-bold mb-0">rerere</a>
                     </div>
-                    <div className="row text-center">
-                        <div className="col-lg-6">
-                            <a href="/products/${product.id}/${product.language.nameVn}"
-                                className="btn border border-secondary rounded-pill px-3 text-primary w-100">
-                                Mua</a>
-                        </div>
-                    </div>
+                    <a href="/products/${product.id}/${product.language.nameVn}"
+                        className="btn border border-secondary rounded-pill px-3 text-primary w-50">
+                        Buy
+                    </a>
+
                 </div>
             </div>
         </div>

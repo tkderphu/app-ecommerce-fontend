@@ -1,18 +1,17 @@
 
 import axios, { Method, AxiosRequestConfig } from 'axios';
 const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    'Content-Type': "application/json; charset=utf-8",
     'Authorization': `Bearer `,
 }
 const BASE = 'http://localhost:8081/app-api'
 const BASE_ADMIN = 'http://localhost:8081/admin-api'
 export class Request {
     public static call(path: string, method: Method, object?: any) {
-        let data: any;
+        let data: any = object;
         if (typeof (object) === 'object') {
             data = JSON.stringify(object);
         }
-        data = object;
         let config: AxiosRequestConfig = {
             method: method,
             maxBodyLength: Infinity,
@@ -20,9 +19,10 @@ export class Request {
             data: data,
             headers: headers
         };
-
+        console.log(config)
         return axios.request(config)
     }
+
     public static callAdmin(path: string, method: Method, object?: any) {
         let data: any;
         if (typeof (object) === 'object') {
@@ -32,7 +32,7 @@ export class Request {
         let config: AxiosRequestConfig = {
             method: method,
             maxBodyLength: Infinity,
-            url: `${BASE}${path}`,
+            url: `${BASE_ADMIN}${path}`,
             data: data,
             headers: headers
         };

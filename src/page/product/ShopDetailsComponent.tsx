@@ -1,8 +1,27 @@
+import { useEffect, useState } from "react"
+import ModalComponent from "../../component/ModalComponent"
 import FooterComponent from "../../layout/FooterComponent"
 import HeaderComponent from "../../layout/HeaderComponent"
 import ProuctCardComponent from "./component/product.card"
+import { AppProductSpuDetailsRespVO } from "./record/record.response"
+import spuService from "./service/spu.service"
 
 function ShopDetailsComponent() {
+
+    const [productDetail, setProductDetail] = useState<AppProductSpuDetailsRespVO>()
+
+    useEffect(() => {
+        spuService.getDetailProductSpu(1).then(res => {
+            if (res.data.code === 200) {
+                setProductDetail(res.data.data)
+            } else {
+                alert("Lỗi service: " + res.data.message)
+            }
+        }).catch(err => {
+            console.error(err)
+        })
+    }, [])
+
     return (
         <div>
             <HeaderComponent />
@@ -13,14 +32,34 @@ function ShopDetailsComponent() {
                             <div className="col-lg-6">
                                 <div className="border rounded">
                                     <a href="#">
-                                        <img src="img/single-item.jpg" className="img-fluid rounded" alt="Image" />
+                                        <img src={productDetail?.imageUrl} className="img-fluid rounded" alt="Image" />
                                     </a>
                                 </div>
                             </div>
                             <div className="col-lg-6">
-                                <h4 className="fw-bold mb-3">Brocoli</h4>
-                                <p className="mb-3">Category: Vegetables</p>
-                                <h5 className="fw-bold mb-3">3,35 $</h5>
+                                <div className="d-flex justify-content-around mb-2 flex-wrap">
+                                    <p><b>Sold</b>: {productDetail?.sold}</p>
+                                    <p><b>Rating</b>: {productDetail?.sold}</p>
+                                    <a href="#comment-product"><b>Comments</b>: {productDetail?.sold}</a>
+                                    <a href="javascript:(0)"
+                                        data-toggle="modal" data-target={"#report-product"}
+                                    ><b>Report</b>: {productDetail?.sold}</a>
+                                    <ModalComponent body={"Report product"}
+                                        title={"Report"} id="report-product" />
+                                </div>
+                                {productDetail?.discount && (
+                                    <div className="d-flex justify-content-around align-items-center mb-2">
+                                    <div><b>Discount</b>: <span style={{color:"red"}}>55%</span></div>
+                                    <div className="d-flex flex-column align-items-end">
+                                        <div><b>From: </b><span style={{color:"red"}}>22-5-2024</span></div>
+                                        <div><b>To: </b><span style={{color:"red"}}>27-5-2024</span></div>
+                                    </div>
+                                </div>
+                                )}
+                            
+                                <h4 className="fw-bold mb-3">{productDetail?.name}</h4>
+                                <p className="mb-3">Category: {productDetail?.category?.name}</p>
+                                <h5 className="fw-bold mb-3">{productDetail?.minPrice?.toLocaleString() + " - " + productDetail?.maxPrice?.toLocaleString()}</h5>
                                 <div className="d-flex mb-4">
                                     <i className="fa fa-star text-secondary"></i>
                                     <i className="fa fa-star text-secondary"></i>
@@ -28,8 +67,6 @@ function ShopDetailsComponent() {
                                     <i className="fa fa-star text-secondary"></i>
                                     <i className="fa fa-star"></i>
                                 </div>
-                                <p className="mb-4">The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic words etc.</p>
-                                <p className="mb-4">Susp endisse ultricies nisi vel quam suscipit. Sabertooth peacock flounder; chain pickerel hatchetfish, pencilfish snailfish</p>
                                 <div className="input-group quantity mb-5" style={{ width: "100px" }}>
                                     <div className="input-group-btn">
                                         <button className="btn btn-sm btn-minus rounded-circle bg-light border" >
@@ -43,7 +80,15 @@ function ShopDetailsComponent() {
                                         </button>
                                     </div>
                                 </div>
-                                <a href="#" className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i className="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                <div className="d-flex justify-content-around flex-wrap">
+                                <a href="#" className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                                    <i className="fa fa-shopping-bag me-2 text-primary">
+                                    </i> Add to cart</a>
+
+                                <a href="#" className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                                    <i className="fa fa-shopping-bag me-2 text-primary">
+                                    </i> Buy</a>
+                                </div>
                             </div>
                             <div className="col-lg-12">
                                 <nav>
@@ -55,51 +100,40 @@ function ShopDetailsComponent() {
                                 </nav>
                                 <div className="tab-content mb-5">
                                     <div className="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                                        <p>The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic words etc.
-                                            Susp endisse ultricies nisi vel quam suscipit </p>
-                                        <p>Sabertooth peacock flounder; chain pickerel hatchetfish, pencilfish snailfish filefish Antarctic
-                                            icefish goldeye aholehole trumpetfish pilot fish airbreathing catfish, electric ray sweeper.</p>
+                                        <p>{productDetail?.description}</p>
                                         <div className="px-2">
                                             <div className="row g-4">
                                                 <div className="col-6">
                                                     <div className="row bg-light align-items-center text-center justify-content-center py-2">
                                                         <div className="col-6">
-                                                            <p className="mb-0">Weight</p>
+                                                            <p className="mb-0">Brand</p>
                                                         </div>
                                                         <div className="col-6">
-                                                            <p className="mb-0">1 kg</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row text-center align-items-center justify-content-center py-2">
-                                                        <div className="col-6">
-                                                            <p className="mb-0">Country of Origin</p>
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <p className="mb-0">Agro Farm</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row bg-light text-center align-items-center justify-content-center py-2">
-                                                        <div className="col-6">
-                                                            <p className="mb-0">Quality</p>
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <p className="mb-0">Organic</p>
+                                                            <p className="mb-0">{productDetail?.brand?.name}</p>
                                                         </div>
                                                     </div>
                                                     <div className="row text-center align-items-center justify-content-center py-2">
                                                         <div className="col-6">
-                                                            <p className="mb-0">Сheck</p>
+                                                            <p className="mb-0">Send from</p>
                                                         </div>
                                                         <div className="col-6">
-                                                            <p className="mb-0">Healthy</p>
+                                                            <p className="mb-0">{productDetail?.sendFrom}</p>
                                                         </div>
                                                     </div>
                                                     <div className="row bg-light text-center align-items-center justify-content-center py-2">
                                                         <div className="col-6">
-                                                            <p className="mb-0">Min Weight</p>
+                                                            <p className="mb-0">Quantity</p>
                                                         </div>
                                                         <div className="col-6">
-                                                            <p className="mb-0">250 Kg</p>
+                                                            <p className="mb-0">5555</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row text-center align-items-center justify-content-center py-2">
+                                                        <div className="col-6">
+                                                            <p className="mb-0">Material</p>
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <p className="mb-0">Chat lieu vai cotton</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -114,7 +148,7 @@ function ShopDetailsComponent() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-lg-12">
+                            <div className="col-lg-12" id="comment-product">
                                 <nav>
                                     <div className="nav nav-tabs mb-3">
                                         <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
@@ -165,7 +199,7 @@ function ShopDetailsComponent() {
                 </div>
             </div>
             <h1 className="fw-bold mb-0 mb-5">Related products</h1>
-            <div className="row g-4 justify-content-center" id="products">
+            <div className="row g-4 justify-content-center">
                 <ProuctCardComponent />
                 <ProuctCardComponent />
                 <ProuctCardComponent />
