@@ -1,0 +1,59 @@
+ /* Hide the default radio button circle */
+ .custom-control-input {
+    display: none;
+}
+
+/* Style the label as a rectangular block */
+.custom-control-label {
+    position: relative;
+    padding: 10px 20px 10px 45px; /* Add left padding to create space for the thumbnail */
+    background-color: #f8f9fa;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-block;
+    width: auto;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+/* When checked, change background to white and text color stays black */
+.custom-control-input:checked ~ .custom-control-label {
+    background-color: #ffffff;  /* White background */
+    color: #000000;  /* Black text color */
+    border-color: #28a745; /* Green border color */
+}
+
+/* Add styles for the thumbnail */
+.thumbnail {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%); /* Center the thumbnail vertically */
+    width: 30px;  /* Adjust size of the thumbnail */
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover; /* Ensures the image covers the area */
+}
+
+/* Green circle on the top-right corner with checkmark when checked */
+.custom-control-input:checked ~ .custom-control-label::after {
+    content: '✓';  /* Checkmark inside the circle */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px; /* Circle size */
+    height: 20px;
+    background-color: #28a745; /* Green circle */
+    color: white; /* White checkmark */
+    font-size: 14px;  /* Adjust checkmark size */
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* Center the checkmark inside the circle */
+    border-radius: 50%; /* Make it a circle */
+}

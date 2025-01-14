@@ -1,18 +1,22 @@
+import { count } from "console"
+import { type } from "os"
 import { useEffect, useState } from "react"
-import ModalComponent from "../../component/ModalComponent"
-import FooterComponent from "../../layout/FooterComponent"
-import HeaderComponent from "../../layout/HeaderComponent"
-import ProuctCardComponent from "./component/product.card"
-import { AppProductSpuDetailsRespVO } from "./record/record.response"
-import spuService from "./service/spu.service"
+import ModalComponent from "../../../component/ModalComponent"
+import FooterComponent from "../../../layout/FooterComponent"
+import HeaderComponent from "../../../layout/HeaderComponent"
+import ProuctCardComponent from "../component/product.card"
+import { AppProductSkuRespVO, AppProductSpuDetailsRespVO } from "../record/record.response"
+import spuService from "../service/spu.service"
+import "./ShopDetails.css"
 
 function ShopDetailsComponent() {
-
+    const [countProduct, setCountProduct] = useState<number>(1)
     const [productDetail, setProductDetail] = useState<AppProductSpuDetailsRespVO>()
 
     useEffect(() => {
         spuService.getDetailProductSpu(1).then(res => {
             if (res.data.code === 200) {
+                console.log(res.data.data)
                 setProductDetail(res.data.data)
             } else {
                 alert("Lỗi service: " + res.data.message)
@@ -21,6 +25,42 @@ function ShopDetailsComponent() {
             console.error(err)
         })
     }, [])
+
+    const addToCart = () => {
+        let sumId: number = 0
+        productDetail?.properties?.map(pair => {
+            const name: string = "sku-property-" + pair.key?.id
+            document.getElementsByName(name).forEach(element => {
+                //@ts-ignore
+                //@ts-ignore
+                const checked: boolean = element.checked
+                //@ts-ignore
+                const value = element.value
+                if (checked) {
+                    sumId += Number.parseInt(value)
+                }
+            })
+            const sku = getSku(sumId)
+
+            if (sku) {
+                console.log(sku)
+            } else {
+                alert("Product not exists")
+            }
+
+        })
+
+    }
+
+    const getSku = (sumIdOfPropertyValue: number) => {
+        return productDetail?.skus?.filter(pair => {
+            return pair.key === sumIdOfPropertyValue
+        })?.at(0)
+    }
+
+    const buy = () => {
+
+    }
 
     return (
         <div>
@@ -49,17 +89,40 @@ function ShopDetailsComponent() {
                                 </div>
                                 {productDetail?.discount && (
                                     <div className="d-flex justify-content-around align-items-center mb-2">
-                                    <div><b>Discount</b>: <span style={{color:"red"}}>55%</span></div>
-                                    <div className="d-flex flex-column align-items-end">
-                                        <div><b>From: </b><span style={{color:"red"}}>22-5-2024</span></div>
-                                        <div><b>To: </b><span style={{color:"red"}}>27-5-2024</span></div>
+                                        <div><b>Discount</b>: <span style={{ color: "red" }}>55%</span></div>
+                                        <div className="d-flex flex-column align-items-end">
+                                            <div><b>From: </b><span style={{ color: "red" }}>22-5-2024</span></div>
+                                            <div><b>To: </b><span style={{ color: "red" }}>27-5-2024</span></div>
+                                        </div>
                                     </div>
-                                </div>
                                 )}
-                            
+
                                 <h4 className="fw-bold mb-3">{productDetail?.name}</h4>
                                 <p className="mb-3">Category: {productDetail?.category?.name}</p>
                                 <h5 className="fw-bold mb-3">{productDetail?.minPrice?.toLocaleString() + " - " + productDetail?.maxPrice?.toLocaleString()}</h5>
+                                {productDetail?.properties?.map(pair => {
+                                    return (
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <div ><b>{pair.key?.name}</b></div>
+                                            <div className="d-flex col-10 flex-wrap">
+                                                {pair?.value?.map(value => {
+                                                    return (
+                                                        <div className="custom-control custom-radio mb-3" style={{ marginLeft: "20px" }}>
+                                                            <input type="radio" id={"customRadio3" + value.id}
+                                                                value={value.id}
+                                                                name={"sku-property-" + pair.key?.id} className="custom-control-input" />
+                                                            <label className="custom-control-label" htmlFor={"customRadio3" + value.id}>
+                                                                <img src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg" alt="Thumbnail" className="thumbnail" />
+                                                                {value.value}
+                                                            </label>
+
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
                                 <div className="d-flex mb-4">
                                     <i className="fa fa-star text-secondary"></i>
                                     <i className="fa fa-star text-secondary"></i>
@@ -67,27 +130,35 @@ function ShopDetailsComponent() {
                                     <i className="fa fa-star text-secondary"></i>
                                     <i className="fa fa-star"></i>
                                 </div>
-                                <div className="input-group quantity mb-5" style={{ width: "100px" }}>
-                                    <div className="input-group-btn">
-                                        <button className="btn btn-sm btn-minus rounded-circle bg-light border" >
-                                            <i className="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" className="form-control form-control-sm text-center border-0" value="1" />
-                                    <div className="input-group-btn">
-                                        <button className="btn btn-sm btn-plus rounded-circle bg-light border">
-                                            <i className="fa fa-plus"></i>
-                                        </button>
-                                    </div>
+                                <div className=" mb-5 d-flex align-items-center justify-content-around" style={{ width: "100px" }}>
+                                    <button
+                                        onClick={() => {
+                                            if (countProduct - 1 > 0) {
+                                                setCountProduct(countProduct - 1)
+                                            }
+                                        }}
+                                        className="btn btn-sm btn-minus rounded-circle bg-light border" >
+                                        -
+                                    </button>
+                                    <div>{countProduct}</div>
+                                    <button
+                                        onClick={() => {
+                                            setCountProduct(countProduct + 1)
+                                        }}
+                                        className="btn btn-sm btn-plus rounded-circle bg-light border">
+                                        +
+                                    </button>
                                 </div>
                                 <div className="d-flex justify-content-around flex-wrap">
-                                <a href="#" className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
-                                    <i className="fa fa-shopping-bag me-2 text-primary">
-                                    </i> Add to cart</a>
+                                    <a href="#"
+                                        onClick={() => addToCart()}
+                                        className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                                        <i className="fa fa-shopping-bag me-2 text-primary">
+                                        </i> Add to cart</a>
 
-                                <a href="#" className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
-                                    <i className="fa fa-shopping-bag me-2 text-primary">
-                                    </i> Buy</a>
+                                    <a href="#" className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                                        <i className="fa fa-shopping-bag me-2 text-primary">
+                                        </i> Buy</a>
                                 </div>
                             </div>
                             <div className="col-lg-12">

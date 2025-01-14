@@ -14,3 +14,8 @@ export class PagePram {
     limit: number = 50
 
 }
+
+export interface Pair<K, V> {
+    key?: K
+    value?: V
+} 

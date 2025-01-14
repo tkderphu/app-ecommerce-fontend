@@ -1,3 +1,5 @@
+import { Pair } from "../../../common/common"
+
 export class AppProductSpuSimpleRespVO {
     id?: number
     name?: string
@@ -14,7 +16,8 @@ export class AppProductSpuDetailsRespVO extends AppProductSpuSimpleRespVO{
     sliders?: Array<string>
     statistic?: any
     seller?: any
-    skus?: Array<AppProductSkuRespVO>
+    skus?: Array<Pair<number, AppProductSkuRespVO>>
+    properties?: Array<Pair<PropertyRespVO, Array<PropertyValueRespVO>>>
     description?: string   
 }
 
@@ -36,6 +39,7 @@ export class PropertyRespVO {
 export class PropertyValueRespVO {
     id?: number
     value?: string
+    image?: string
 }
 export interface Category {
   id?: number
