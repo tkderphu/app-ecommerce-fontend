@@ -22,7 +22,7 @@ function ProuctCardComponent(props: Props) {
                     <div className="col-12 text-truncate h4">
                         {props.productSpu?.name}
                     </div>
-                    <p className="text-dark fs-5 fw-bold mb-0">{props.productSpu?.minPrice} - {props.productSpu?.maxPrice}</p>
+                    <p className="text-dark fs-5 fw-bold mb-0">{props.productSpu?.minPrice?.toLocaleString()} - {props.productSpu?.maxPrice?.toLocaleString()}</p>
                     <div className="d-flex justify-content-around mb-2">
                         <p className="mb-1" style={{ color: "red", fontWeight: "bold" }}>From: {props.productSpu?.sold}</p>
                         <p className="mb-1" style={{ color: "red", fontWeight: "bold" }}>Sold: {props.productSpu?.sold}</p>

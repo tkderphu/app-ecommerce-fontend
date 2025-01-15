@@ -19,7 +19,7 @@ export class Request {
             data: data,
             headers: headers
         };
-        console.log(config)
+       
         return axios.request(config)
     }
 

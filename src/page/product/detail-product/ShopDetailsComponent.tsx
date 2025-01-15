@@ -1,9 +1,11 @@
 import { count } from "console"
 import { type } from "os"
 import { useEffect, useState } from "react"
+import { Pair } from "../../../common/common"
 import ModalComponent from "../../../component/ModalComponent"
 import FooterComponent from "../../../layout/FooterComponent"
 import HeaderComponent from "../../../layout/HeaderComponent"
+import { CartCreateReqVO } from "../../trade/record/record.req.vo"
 import ProuctCardComponent from "../component/product.card"
 import { AppProductSkuRespVO, AppProductSpuDetailsRespVO } from "../record/record.response"
 import spuService from "../service/spu.service"
@@ -12,22 +14,24 @@ import "./ShopDetails.css"
 function ShopDetailsComponent() {
     const [countProduct, setCountProduct] = useState<number>(1)
     const [productDetail, setProductDetail] = useState<AppProductSpuDetailsRespVO>()
-
+    const [sku, setSku] = useState<AppProductSkuRespVO | undefined>()
     useEffect(() => {
-        spuService.getDetailProductSpu(1).then(res => {
+        spuService.getDetailProductSpu(2).then(res => {
             if (res.data.code === 200) {
-                console.log(res.data.data)
+
                 setProductDetail(res.data.data)
             } else {
                 alert("Lỗi service: " + res.data.message)
             }
         }).catch(err => {
+            console.error("Server died")
             console.error(err)
         })
     }, [])
 
     const addToCart = () => {
         let sumId: number = 0
+
         productDetail?.properties?.map(pair => {
             const name: string = "sku-property-" + pair.key?.id
             document.getElementsByName(name).forEach(element => {
@@ -40,23 +44,27 @@ function ShopDetailsComponent() {
                     sumId += Number.parseInt(value)
                 }
             })
-            const sku = getSku(sumId)
-
-            if (sku) {
-                console.log(sku)
-            } else {
-                alert("Product not exists")
-            }
-
         })
+        const sku = getSku(sumId)
+        if (sku) {
 
+        } else {
+            alert("product is not exists")
+        }
     }
+
+
 
     const getSku = (sumIdOfPropertyValue: number) => {
         return productDetail?.skus?.filter(pair => {
             return pair.key === sumIdOfPropertyValue
         })?.at(0)
     }
+
+    const checkWhetherPropertyIsMatch = () => {
+
+    }
+
 
     const buy = () => {
 
@@ -69,97 +77,173 @@ function ShopDetailsComponent() {
                 <div className="container py-5">
                     <div className="row g-4 mb-5">
                         <div className="row g-4">
-                            <div className="col-lg-6">
-                                <div className="border rounded">
-                                    <a href="#">
-                                        <img src={productDetail?.imageUrl} className="img-fluid rounded" alt="Image" />
-                                    </a>
-                                </div>
-                            </div>
-                            <div className="col-lg-6">
-                                <div className="d-flex justify-content-around mb-2 flex-wrap">
-                                    <p><b>Sold</b>: {productDetail?.sold}</p>
-                                    <p><b>Rating</b>: {productDetail?.sold}</p>
-                                    <a href="#comment-product"><b>Comments</b>: {productDetail?.sold}</a>
-                                    <a href="javascript:(0)"
-                                        data-toggle="modal" data-target={"#report-product"}
-                                    ><b>Report</b>: {productDetail?.sold}</a>
-                                    <ModalComponent body={"Report product"}
-                                        title={"Report"} id="report-product" />
-                                </div>
-                                {productDetail?.discount && (
-                                    <div className="d-flex justify-content-around align-items-center mb-2">
-                                        <div><b>Discount</b>: <span style={{ color: "red" }}>55%</span></div>
-                                        <div className="d-flex flex-column align-items-end">
-                                            <div><b>From: </b><span style={{ color: "red" }}>22-5-2024</span></div>
-                                            <div><b>To: </b><span style={{ color: "red" }}>27-5-2024</span></div>
-                                        </div>
+                            <div className="d-flex">
+                                <div className="col-lg-6">
+                                    <div className="border rounded">
+                                        <a href="#">
+                                            <img src={productDetail?.imageUrl} className="img-fluid rounded" alt="Image" />
+                                        </a>
                                     </div>
-                                )}
-
-                                <h4 className="fw-bold mb-3">{productDetail?.name}</h4>
-                                <p className="mb-3">Category: {productDetail?.category?.name}</p>
-                                <h5 className="fw-bold mb-3">{productDetail?.minPrice?.toLocaleString() + " - " + productDetail?.maxPrice?.toLocaleString()}</h5>
-                                {productDetail?.properties?.map(pair => {
-                                    return (
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <div ><b>{pair.key?.name}</b></div>
-                                            <div className="d-flex col-10 flex-wrap">
-                                                {pair?.value?.map(value => {
-                                                    return (
-                                                        <div className="custom-control custom-radio mb-3" style={{ marginLeft: "20px" }}>
-                                                            <input type="radio" id={"customRadio3" + value.id}
-                                                                value={value.id}
-                                                                name={"sku-property-" + pair.key?.id} className="custom-control-input" />
-                                                            <label className="custom-control-label" htmlFor={"customRadio3" + value.id}>
-                                                                <img src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg" alt="Thumbnail" className="thumbnail" />
-                                                                {value.value}
-                                                            </label>
-
-                                                        </div>
-                                                    )
-                                                })}
+                                </div>
+                                <div className="col-lg-6">
+                                    <div className="d-flex justify-content-around mb-2 flex-wrap">
+                                        <p><b>Sold</b>: {productDetail?.sold}</p>
+                                        <p><b>Rating</b>: {productDetail?.sold}</p>
+                                        <a href="#comment-product"><b>Comments</b>: {productDetail?.sold}</a>
+                                        <a href="javascript:(0)"
+                                            data-toggle="modal" data-target={"#report-product"}
+                                        ><b>Report</b>: {productDetail?.sold}</a>
+                                        <ModalComponent body={"Report product"}
+                                            title={"Report"} id="report-product" />
+                                    </div>
+                                    {(
+                                        <div className="d-flex justify-content-around align-items-center mb-2">
+                                            <div><b>Discount</b>: <span style={{ color: "red" }}>55%</span></div>
+                                            <div className="d-flex flex-column align-items-end">
+                                                <div><b>From: </b><span style={{ color: "red" }}>22-5-2024</span></div>
+                                                <div><b>To: </b><span style={{ color: "red" }}>27-5-2024</span></div>
                                             </div>
                                         </div>
-                                    )
-                                })}
-                                <div className="d-flex mb-4">
-                                    <i className="fa fa-star text-secondary"></i>
-                                    <i className="fa fa-star text-secondary"></i>
-                                    <i className="fa fa-star text-secondary"></i>
-                                    <i className="fa fa-star text-secondary"></i>
-                                    <i className="fa fa-star"></i>
-                                </div>
-                                <div className=" mb-5 d-flex align-items-center justify-content-around" style={{ width: "100px" }}>
-                                    <button
-                                        onClick={() => {
-                                            if (countProduct - 1 > 0) {
-                                                setCountProduct(countProduct - 1)
-                                            }
-                                        }}
-                                        className="btn btn-sm btn-minus rounded-circle bg-light border" >
-                                        -
-                                    </button>
-                                    <div>{countProduct}</div>
-                                    <button
-                                        onClick={() => {
-                                            setCountProduct(countProduct + 1)
-                                        }}
-                                        className="btn btn-sm btn-plus rounded-circle bg-light border">
-                                        +
-                                    </button>
-                                </div>
-                                <div className="d-flex justify-content-around flex-wrap">
-                                    <a href="#"
-                                        onClick={() => addToCart()}
-                                        className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
-                                        <i className="fa fa-shopping-bag me-2 text-primary">
-                                        </i> Add to cart</a>
+                                    )}
 
-                                    <a href="#" className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
-                                        <i className="fa fa-shopping-bag me-2 text-primary">
-                                        </i> Buy</a>
+                                    <h4 className="fw-bold mb-3">{productDetail?.name}</h4>
+                                    <p className="mb-3">Category: {productDetail?.category?.name}</p>
+                                    <h5 className="fw-bold mb-3">{productDetail?.minPrice?.toLocaleString() + " - " + productDetail?.maxPrice?.toLocaleString()}</h5>
+                                    {productDetail?.properties?.map(pair => {
+                                        return (
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <div ><b>{pair.key?.name}</b></div>
+                                                <div className="d-flex col-10 flex-wrap">
+                                                    {pair?.value?.map(value => {
+                                                        return (
+                                                            <div className="custom-control custom-radio mb-3"
+
+                                                                style={{ marginLeft: "20px" }}>
+                                                                <input type="radio" id={"customRadio3" + value.id}
+                                                                    onClick={() => {
+                                                                        let sumId: number = 0
+                                                                        productDetail?.properties?.map(pair => {
+                                                                            const name: string = "sku-property-" + pair.key?.id
+                                                                            document.getElementsByName(name).forEach(element => {
+                                                                                //@ts-ignore
+                                                                                //@ts-ignore
+                                                                                const checked: boolean = element.checked
+                                                                                //@ts-ignore
+                                                                                const value = element.value
+                                                                                if (checked) {
+                                                                                    sumId += Number.parseInt(value)
+                                                                                }
+                                                                            })
+                                                                        })
+                                                                        const res: Pair<number, AppProductSkuRespVO> | undefined = getSku(sumId)
+                                                                        console.log("sku: ", res)
+                                                                         //@ts-ignore
+                                                                         setSku(res?.value)
+                                                                    }}
+                                                                    value={value.id}
+                                                                    name={"sku-property-" + pair.key?.id} className="custom-control-input" />
+                                                                <label className="custom-control-label" htmlFor={"customRadio3" + value.id}>
+                                                                    <img src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg" alt="Thumbnail" className="thumbnail" />
+                                                                    {value.value}
+                                                                </label>
+
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+
+                                    <div className="mb-4 d-flex align-items-center justify-content-around" style={{ width: "100px" }}>
+                                        <button
+                                            onClick={() => {
+                                                if (countProduct - 1 > 0) {
+                                                    setCountProduct(countProduct - 1)
+                                                }
+                                            }}
+                                            className="btn btn-sm btn-minus rounded-circle bg-light border" >
+                                            -
+                                        </button>
+                                        <div>{countProduct}</div>
+                                        <button
+                                            onClick={() => {
+                                                setCountProduct(countProduct + 1)
+                                            }}
+                                            className="btn btn-sm btn-plus rounded-circle bg-light border">
+                                            +
+                                        </button>
+                                    </div>
+                                    {!sku && <div className="text-start mb-3"><b>Số lượng sản phẩm còn lại:</b> <span style={{ color: "red" }}>{0}</span></div>}
+                                    {sku && <div className="text-start mb-3"><b>Số lượng sản phẩm còn lại:</b> <span style={{ color: "red" }}>{sku?.inStock}</span></div>}
+                                    <div className="d-flex justify-content-around flex-wrap">
+                                        <a href="javascript:(0)"
+                                            onClick={() => {
+                                                if(sku) {
+                                                    const cartItemReq: CartCreateReqVO = {
+                                                        productSkuId: sku.id,
+                                                        quantity: countProduct
+                                                    }
+                                                    console.log("cart: ", cartItemReq   )
+                                                } else {
+                                                    alert("Sản phẩm đã hết")
+                                                }
+                                            }}  
+                                            className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                                            <i className="fa fa-shopping-bag me-2 text-primary">
+                                            </i> Add to cart</a>
+
+                                        <a href="javascript:(0)" className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                                            <i className="fa fa-shopping-bag me-2 text-primary">
+                                            </i> Buy</a>
+                                    </div>
                                 </div>
+                            </div>
+                            <div>
+                                <nav>
+                                    <div className="nav nav-tabs mb-3">
+                                        <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                            id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                            aria-controls="nav-about" aria-selected="true">Seller</button>
+                                    </div>
+                                    <div className="tab-content">
+                                        <div className="d-flex align-items-center">
+                                            <div className="col-5 d-flex align-items-center">
+                                                <img src={productDetail?.seller?.shopImage} className="border rounded-circle" style={{ marginRight: "20px" }} width={"100px"} />
+                                                <div className="d-flex flex-column">
+                                                    <div className="mb-3"><span style={{ color: "black", fontSize: "22px" }}>{productDetail?.seller?.shopName}</span></div>
+                                                    <div className="d-flex w-100">
+                                                        <a href="javascript:(0)" className="border" style={{ fontSize: "20px", paddingRight: "30px", paddingLeft: "30px" }}>Chat</a>
+                                                        <a href="javascript:(0)" className="border" style={{ fontSize: "20px", paddingRight: "30px", paddingLeft: "30px", marginLeft: "20px" }}> See shop</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="d-flex flex-wrap align-items-center mt-3">
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Đánh giá</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numComment}</div>
+                                                </div>
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Sản phẩm</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numProduct}</div>
+                                                </div>
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tham gia</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.joined}</div>
+                                                </div>
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Người theo dõi</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numFollow}</div>
+                                                </div>
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tỷ lệ phản hồi</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.replyPercent}%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </nav>
+
                             </div>
                             <div className="col-lg-12">
                                 <nav>
@@ -168,6 +252,7 @@ function ShopDetailsComponent() {
                                             id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
                                             aria-controls="nav-about" aria-selected="true">Description</button>
                                     </div>
+
                                 </nav>
                                 <div className="tab-content mb-5">
                                     <div className="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">

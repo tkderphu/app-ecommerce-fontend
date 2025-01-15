@@ -19,3 +19,11 @@ export interface Pair<K, V> {
     key?: K
     value?: V
 } 
+
+export const mapToObject = (map: Map<string, string>): Record<string, string> => {
+    const obj: Record<string, string> = {};
+    map.forEach((value, key) => {
+      obj[key] = value;
+    });
+    return obj;
+  };

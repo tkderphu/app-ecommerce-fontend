@@ -8,9 +8,9 @@ const headers: Record<string, string> = {
 const PATH = "/product/spus"
 class SpuService {
     getPageProductSpu(req: PageProductSpuReqVO) {
-        console.log(typeof req)
+
         let test =  Request.call(PATH, 'POST', req)
-        console.log(test)    
+         
         return test;
     }
     getDetailProductSpu(spuId: number) {

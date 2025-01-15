@@ -1,5 +1,7 @@
 export interface SellerRespVO {
-
+    id?: number
+    shopName?: string
+    shopImage?: string
 }
 export interface AuthLoginResVO {
     userId?: number

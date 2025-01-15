@@ -11,6 +11,7 @@ export interface CartListRespVO {
     seller?: SellerRespVO
     cartItems?: Array<CartItemRespVO>
 }
+
 export interface AppOrderSimpleRespVO  {
     id?: number
     totalPrice?: number

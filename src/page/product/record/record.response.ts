@@ -1,4 +1,5 @@
 import { Pair } from "../../../common/common"
+import { SellerRespVO } from "../../authen/record/record.resp.vo"
 
 export class AppProductSpuSimpleRespVO {
     id?: number
@@ -15,13 +16,27 @@ export class AppProductSpuSimpleRespVO {
 export class AppProductSpuDetailsRespVO extends AppProductSpuSimpleRespVO{
     sliders?: Array<string>
     statistic?: any
-    seller?: any
+    seller?: SellerDetailRespVO
     skus?: Array<Pair<number, AppProductSkuRespVO>>
     properties?: Array<Pair<PropertyRespVO, Array<PropertyValueRespVO>>>
     description?: string   
 }
 
+export interface SellerDetailRespVO extends SellerRespVO{
+    numComment?: number
+    numProduct?: number
+    joined?: number
+    numFollow?: number
+    replyPercent?: number
+}
+export interface BrandRespVO {
+    id?: number
+    name?: number
+    slug?: number
+    thumbnail?: number
+}
 export class AppProductSkuRespVO {
+    id?: number
     price?: number
     imageUrl?: string
     inStock?: number
