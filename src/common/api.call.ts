@@ -1,8 +1,9 @@
 
 import axios, { Method, AxiosRequestConfig } from 'axios';
+import { getToken } from './common';
 const headers: Record<string, string> = {
     'Content-Type': "application/json; charset=utf-8",
-    'Authorization': `Bearer `,
+    'Authorization': `UUID ${getToken()?.accessToken}`,
 }
 const BASE = 'http://localhost:8081/app-api'
 const BASE_ADMIN = 'http://localhost:8081/admin-api'

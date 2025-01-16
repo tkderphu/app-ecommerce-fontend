@@ -1,11 +1,14 @@
 import { count } from "console"
 import { type } from "os"
 import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 import { Pair } from "../../../common/common"
 import ModalComponent from "../../../component/ModalComponent"
+import ToastComponent from "../../../component/ToastComponent"
 import FooterComponent from "../../../layout/FooterComponent"
 import HeaderComponent from "../../../layout/HeaderComponent"
 import { CartCreateReqVO } from "../../trade/record/record.req.vo"
+import cartService from "../../trade/service/cart.service"
 import ProuctCardComponent from "../component/product.card"
 import { AppProductSkuRespVO, AppProductSpuDetailsRespVO } from "../record/record.response"
 import spuService from "../service/spu.service"
@@ -15,8 +18,10 @@ function ShopDetailsComponent() {
     const [countProduct, setCountProduct] = useState<number>(1)
     const [productDetail, setProductDetail] = useState<AppProductSpuDetailsRespVO>()
     const [sku, setSku] = useState<AppProductSkuRespVO | undefined>()
+    const { id } = useParams(); 
     useEffect(() => {
-        spuService.getDetailProductSpu(2).then(res => {
+        
+        spuService.getDetailProductSpu(id).then(res => {
             if (res.data.code === 200) {
 
                 setProductDetail(res.data.data)
@@ -73,8 +78,8 @@ function ShopDetailsComponent() {
     return (
         <div>
             <HeaderComponent />
-            <div className="container-fluid py-5 mt-5">
-                <div className="container py-5">
+            <div className="container-fluid">
+                <div className="container py-4">
                     <div className="row g-4 mb-5">
                         <div className="row g-4">
                             <div className="d-flex">
@@ -184,18 +189,28 @@ function ShopDetailsComponent() {
                                                         productSkuId: sku.id,
                                                         quantity: countProduct
                                                     }
-                                                    console.log("cart: ", cartItemReq   )
+                                                    cartService.addItemIntoCart(cartItemReq).then(res => {
+                                                        if(res.data.code != 200) {
+                                                           alert(res.data.message)
+                                                        } else {
+                                                            console.log(res.data)
+                                                        }
+                                                    }).catch(err => {
+                                                        alert("Lỗi hệ thống")
+                                                        console.error(err)
+                                                    })
                                                 } else {
                                                     alert("Sản phẩm đã hết")
                                                 }
                                             }}  
                                             className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
                                             <i className="fa fa-shopping-bag me-2 text-primary">
-                                            </i> Add to cart</a>
+                                            </i>Thêm vào giỏ hàng</a>
 
                                         <a href="javascript:(0)" className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
                                             <i className="fa fa-shopping-bag me-2 text-primary">
-                                            </i> Buy</a>
+                                            </i> Mua hàng</a>
+                                            
                                     </div>
                                 </div>
                             </div>
@@ -204,7 +219,7 @@ function ShopDetailsComponent() {
                                     <div className="nav nav-tabs mb-3">
                                         <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
                                             id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                            aria-controls="nav-about" aria-selected="true">Seller</button>
+                                            aria-controls="nav-about" aria-selected="true">Người bán hàng</button>
                                     </div>
                                     <div className="tab-content">
                                         <div className="d-flex align-items-center">
@@ -250,7 +265,7 @@ function ShopDetailsComponent() {
                                     <div className="nav nav-tabs mb-3">
                                         <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
                                             id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                            aria-controls="nav-about" aria-selected="true">Description</button>
+                                            aria-controls="nav-about" aria-selected="true">Mô tả</button>
                                     </div>
 
                                 </nav>
@@ -309,7 +324,7 @@ function ShopDetailsComponent() {
                                     <div className="nav nav-tabs mb-3">
                                         <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
                                             id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                            aria-controls="nav-about" aria-selected="true">Reviews</button>
+                                            aria-controls="nav-about" aria-selected="true">Bình luận</button>
                                     </div>
                                 </nav>
                                 <div className="d-flex">

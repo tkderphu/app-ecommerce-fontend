@@ -6,7 +6,7 @@ function UserProfileComponent() {
     return (
         <div>
             <HeaderComponent />
-            <div className="container bootstrap snippet" style={{paddingTop: "150px"}}>
+            <div className="container bootstrap snippet">
                 <div className="row">
                     <div className="col-sm-10"><h1><span ></span></h1></div>
                 </div>
@@ -46,21 +46,7 @@ function UserProfileComponent() {
                                 key={"2"}
                             />
                             <br/>
-                            <ButtonModalComponent
-                                body={"test"}
-                                id="test5"
-                                nameButton="Notifications"
-                                title="Your Notifications"
-                                key={"3"}
-                            />
-                            <br/>
-                            <ButtonModalComponent
-                                body={"test"}
-                                id="exampleModal"
-                                nameButton="Followers"
-                                title="Your Followers"
-                                key={"4"}
-                            />
+                           
                         </ul>
                     </div>
                     <div className="col-sm-9">
@@ -102,7 +88,7 @@ function UserProfileComponent() {
                                 <div className="form-group mb-3">
                                     <div className="col-xs-12">
                                         <br />
-                                        <button className="btn btn-lg btn-success"
+                                        <button className="btn btn-lg btn-success mx-4"
                                             type="submit"><i
                                                 className="glyphicon glyphicon-ok-sign"></i> Save
                                         </button>

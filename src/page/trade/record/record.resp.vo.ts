@@ -3,11 +3,11 @@ import { SellerRespVO } from "../../authen/record/record.resp.vo"
 export interface CartItemRespVO {
     id?: number
     selected?: boolean
-    product?: any
+    product?: ProductSkuTradeResVO
     quantity?: number
     totalPrice?: number
 }
-export interface CartListRespVO {
+export interface CartRespVO {
     seller?: SellerRespVO
     cartItems?: Array<CartItemRespVO>
 }
@@ -31,4 +31,11 @@ export interface OrderLineItemRespVO {
 }
 export interface AppOrderDetailsRespVO  extends AppOrderSimpleRespVO{
     lineItems?: Array<OrderLineItemRespVO>
+}
+export interface ProductSkuTradeResVO {
+    id?: number
+    name?: string
+    image?: string
+    price?: number
+    properties?: string
 }

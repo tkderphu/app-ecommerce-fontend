@@ -1,17 +1,36 @@
-import { useState } from "react"
+import React, { Fragment, useEffect, useState } from "react"
+import { CommonResult } from "../../../common/common"
 import FooterComponent from "../../../layout/FooterComponent"
 import HeaderComponent from "../../../layout/HeaderComponent"
+import { CartRespVO } from "../record/record.resp.vo"
+import cartService from "../service/cart.service"
 
 function CartPageComponent() {
+    const [commonResult, setCommonResult] = useState<CommonResult<Array<CartRespVO>>>()
 
 
+    const [selectedItems, setSelectedItems] = useState({});
+
+    useEffect(() => {
+        cartService.getAllItemFromCart().then(res => {
+            if (res.data.code === 200) {
+                console.log(res.data)
+                setCommonResult(res.data)
+            } else {
+                alert(res.data.message)
+            }
+        }).catch(err => {
+            alert("Lỗi hệ thống")
+            console.error(err)
+        })
+    }, [])
     return (
         <div>
             <HeaderComponent />
-            <div className="container-fluid fruite" style={{ paddingTop: "100px" }}>
+            <div className="container-fluid fruite">
                 <div className="container py-5">
                     <div className="table-responsive">
-                        <table className="table">
+                        <table className="table ">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -24,105 +43,73 @@ function CartPageComponent() {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td colSpan={2}><div className="border-secondary rounded-pill btn">
-                                        Seller</div></td>
-                                    <td colSpan={2}>
-                                        <div>
-                                            <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" style={{ marginRight: "20px",width:"25px", height:"25px" }}/>
-                                                <label className="form-check-label" htmlFor="flexCheckChecked" style={{marginTop:"5px", fontWeight:"bold"}}>
-                                                 Choose all
-                                                </label>
-                                        </div>
-                                    </td>
-                                    <td colSpan={2}>
-                                        <div>
-                                            <input type="text" className="border-0 border-bottom border-top rounded" placeholder="Coupon Code" style={{ marginRight: "15px" }} />
-                                            <button className="btn border-secondary rounded-pill text-primary" type="button">Apply Coupon</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                   <div className="btn">
-                                     <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" style={{width:"25px", height:"25px"}}/>
-                                   </div>
-                                    </td>
-                                    <th scope="row">
-                                        <div className="d-flex align-items-center">
-                                            <img src="img/vegetable-item-3.png" className="img-fluid me-5 rounded-circle" style={{ width: "80px", height: "80px" }} alt="" />
-                                        </div>
-                                    </th>
-                                    <td>
-                                        <p className="mb-0 mt-4">Big Banana</p>
-                                    </td>
-                                    <td>
-                                        <p className="mb-0 mt-4">2.99 $</p>
-                                    </td>
-                                    <td>
-                                        <div className="input-group quantity mt-4" style={{ width: "100px" }}>
-                                            <div className="input-group-btn">
-                                                <button className="btn btn-sm btn-minus rounded-circle bg-light border" >
-                                                    <i className="fa fa-minus"></i>
-                                                </button>
-                                            </div>
-                                            <input type="text" className="form-control form-control-sm text-center border-0" value="1" />
-                                            <div className="input-group-btn">
-                                                <button className="btn btn-sm btn-plus rounded-circle bg-light border">
-                                                    <i className="fa fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p className="mb-0 mt-4">2.99 $</p>
-                                    </td>
-                                    <td>
-                                        <button className="btn btn-md rounded-circle bg-light border mt-4" >
-                                            <i className="fa fa-times text-danger"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                <div className="btn">
-                                     <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" style={{width:"25px", height:"25px"}}/>
-                                   </div>
-                                    <th scope="row">
-                                        <div className="d-flex align-items-center">
-                                            <img src="img/vegetable-item-3.png" className="img-fluid me-5 rounded-circle" style={{ width: "80px", height: "80px" }} alt="" />
-                                        </div>
-                                    </th>
-                                    <td>
-                                        <p className="mb-0 mt-4">Big Banana</p>
-                                    </td>
-                                    <td>
-                                        <p className="mb-0 mt-4">2.99 $</p>
-                                    </td>
-                                    <td>
-                                        <div className="input-group quantity mt-4" style={{ width: "100px" }}>
-                                            <div className="input-group-btn">
-                                                <button className="btn btn-sm btn-minus rounded-circle bg-light border" >
-                                                    <i className="fa fa-minus"></i>
-                                                </button>
-                                            </div>
-                                            <input type="text" className="form-control form-control-sm text-center border-0" value="1" />
-                                            <div className="input-group-btn">
-                                                <button className="btn btn-sm btn-plus rounded-circle bg-light border">
-                                                    <i className="fa fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p className="mb-0 mt-4">2.99 $</p>
-                                    </td>
-                                    <td>
-                                        <button className="btn btn-md rounded-circle bg-light border mt-4" >
-                                            <i className="fa fa-times text-danger"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                {commonResult?.data && commonResult.data.map((cartResp) => {
+                                    return <Fragment>
+                                        <tr>
+                                            <td colSpan={2}><div className="border-secondary rounded-pill btn">
+                                                {cartResp.seller?.shopName}</div></td>
+                                            <td colSpan={2}>
+                                                <div>
+                                                    <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" style={{ marginRight: "20px", width: "25px", height: "25px" }} />
+                                                    <label className="form-check-label" htmlFor="flexCheckChecked" style={{ marginTop: "5px", fontWeight: "bold" }}>
+                                                        Choose all
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td colSpan={3}>
+                                                <div>
+                                                    <input type="text" className="border-0 border-bottom border-top rounded" placeholder="Coupon Code" style={{ marginRight: "15px" }} />
+                                                    <button className="btn border-secondary rounded-pill text-primary" type="button">Apply Coupon</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {cartResp.cartItems?.map((item) => {
+                                            return (
+                                                <tr>
+                                                    <td>
+                                                        <div className="btn">
+                                                            <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" style={{ width: "25px", height: "25px" }} />
+                                                        </div>
+                                                    </td>
+                                                    <th scope="row">
+                                                        <div className="d-flex align-items-center">
+                                                            <img src={item.product?.image} className="img-fluid me-5 rounded-circle" style={{ width: "80px", height: "80px" }} alt="" />
+                                                        </div>
+                                                    </th>
+                                                    <td>
+                                                        <p className="mb-0 mt-4">{item.product?.name} - {item.product?.properties}</p>
+                                                    </td>
+                                                    <td>
+                                                        <p className="mb-0 mt-4">{item.product?.price?.toLocaleString()}</p>
+                                                    </td>
+                                                    <td>
+                                                        <div className="input-group quantity mt-4">
+                                                            <div className="input-group-btn">
+                                                                <button className="btn btn-sm btn-minus rounded-circle bg-light border" >
+                                                                    <i className="fa fa-minus"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div className="form-control form-control-sm text-center " style={{ border: "none", backgroundColor: "white", }} >{item.quantity}</div>
+                                                            <div className="input-group-btn">
+                                                                <button className="btn btn-sm btn-plus rounded-circle bg-light border">
+                                                                    <i className="fa fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p className="mb-0 mt-4">{item.totalPrice?.toLocaleString()}</p>
+                                                    </td>
+                                                    <td>
+                                                        <button className="btn btn-md rounded-circle bg-light border mt-4" >
+                                                            <i className="fa fa-times text-danger"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })}
+                                    </Fragment>
+                                })}
                             </tbody>
                         </table>
                     </div>

@@ -137,16 +137,24 @@ function ShopComponent() {
                                 <div className="col-6"></div>
                                 <div className="col-xl-3">
                                     <div className="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                                        <label htmlFor="sort-product">Sắp xếp mặc định:</label>
+                                        <label className="col-3">Sắp xếp: </label>
                                         <select id="sort-product" name="sortType"
                                             className="border-0 form-select-sm bg-light me-3"
-
                                         >
                                             <option
-
+                                            
                                             >
-                                                tt
+                                                Sản phẩm bán chạy
                                             </option>
+                                            <option
+                                            >
+                                                Giá từ cao đến thấp
+                                            </option>
+                                            <option
+                                            >
+                                               Đánh giá từ cao đến thấp
+                                            </option>
+                                            
                                         </select>
                                     </div>
                                 </div>
@@ -278,25 +286,25 @@ function ShopComponent() {
 
                                                 </div>
                                                 <div className="custom-control custom-radio mb-2" style={{ marginRight: "5px" }} >
-                                                    <input type="radio" id={"customRadio3"}
+                                                    <input type="radio" id={"customRadio33"}
                                                         name={"sku-property"} className="custom-control-input" />
-                                                    <label className="custom-control-label" htmlFor={"customRadio3"}>
+                                                    <label className="custom-control-label" htmlFor={"customRadio33"}>
                                                         Trên 2.0
                                                     </label>
 
                                                 </div>
                                                 <div className="custom-control custom-radio mb-2" style={{ marginRight: "5px" }} >
-                                                    <input type="radio" id={"customRadio3"}
+                                                    <input type="radio" id={"customRadio3333"}
                                                         name={"sku-property"} className="custom-control-input" />
-                                                    <label className="custom-control-label" htmlFor={"customRadio3"}>
+                                                    <label className="custom-control-label" htmlFor={"customRadio3333"}>
                                                         Trên 3.0
                                                     </label>
 
                                                 </div>
                                                 <div className="custom-control custom-radio mb-2" style={{ marginRight: "5px" }} >
-                                                    <input type="radio" id={"customRadio3"}
+                                                    <input type="radio" id={"customRadio34"}
                                                         name={"sku-property"} className="custom-control-input" />
-                                                    <label className="custom-control-label" htmlFor={"customRadio3"}>
+                                                    <label className="custom-control-label" htmlFor={"customRadio34"}>
                                                         Trên 4.0
                                                     </label>
 

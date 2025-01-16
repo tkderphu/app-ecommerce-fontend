@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import { AppProductSpuSimpleRespVO } from "../record/record.response"
 
 interface Props {
@@ -28,9 +29,8 @@ function ProuctCardComponent(props: Props) {
                         <p className="mb-1" style={{ color: "red", fontWeight: "bold" }}>Sold: {props.productSpu?.sold}</p>
 
                     </div>
-                    <a href="/products/${product.id}/${product.language.nameVn}"
-                        className="btn border border-secondary rounded-pill px-3 text-primary w-50">
-                        Buy
+                    <a href={"/product/" + props.productSpu?.id} className="btn border border-secondary rounded-pill px-3 text-primary w-50">
+                        Mua
                     </a>
 
                 </div>

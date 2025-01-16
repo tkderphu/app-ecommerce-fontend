@@ -1,3 +1,5 @@
+import { AuthLoginResVO } from "../page/authen/record/record.resp.vo"
+
 export interface CommonResult<T> {
     message?: string
     code?: number
@@ -27,3 +29,13 @@ export const mapToObject = (map: Map<string, string>): Record<string, string> =>
     });
     return obj;
   };
+
+
+export const getToken = () => {
+    if(localStorage.getItem("jwt") === null) {
+        return undefined
+    }
+    //@ts-ignore
+    const res: AuthLoginResVO = JSON.parse(localStorage.getItem("jwt"))
+    return res;
+}

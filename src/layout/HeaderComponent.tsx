@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+import { getToken } from "../common/common"
 import ModalComponent from "../component/ModalComponent"
 
 function HeaderComponent() {
@@ -26,13 +28,13 @@ function HeaderComponent() {
                 </div>
                 <div className="container px-0">
                     <nav className="navbar navbar-light bg-white navbar-expand-xl">
-                        <a href="index.html" className="navbar-brand"><h1 className="text-primary display-6">Fruitables</h1></a>
+                        <a href="/" className="navbar-brand"><h1 className="text-primary display-6">Fruitables</h1></a>
                         <button className="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                             <span className="fa fa-bars text-primary"></span>
                         </button>
                         <div className="collapse navbar-collapse bg-white" id="navbarCollapse">
                             <div className="navbar-nav mx-auto">
-                                <a href="index.html" className="nav-item nav-link active">Home</a>
+                                <a href="" className="nav-item nav-link active">Home</a>
                                 <a href="shop.html" className="nav-item nav-link">Shop</a>
                                 <div className="nav-item dropdown">
                                     <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
@@ -45,18 +47,28 @@ function HeaderComponent() {
                                 </div>
                             </div>
                             <div className="d-flex m-3 me-0">
-                                <a href="#" className="position-relative me-4 my-auto">
+                                <a href="/cart" className="position-relative me-4 my-auto">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-cart3" viewBox="0 0 16 16">
                                         <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
                                     </svg>
                                     <span className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style={{ top: "-5px", left: "15px", height: "20px", minWidth: "20px" }}>3</span>
                                 </a>
-                                <a href="#" className="my-auto">
+                                <div className="dropdown">
+                                    <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        {getToken()?.fullName}
+                                    </button>
+                                    <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a  className="dropdown-item" href="/profile">Thông tin cá nhân</a>
+                                        <a className="dropdown-item" href="/my-orders">Đơn hàng</a>
+                                    </div>
+                                </div>
+                                {/* <a href="#" className="my-auto">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-person-circle" viewBox="0 0 16 16">
                                         <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                                         <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
                                     </svg>
-                                </a>
+                                    <div>{getToken()?.fullName}</div>
+                                </a> */}
 
                             </div>
                         </div>

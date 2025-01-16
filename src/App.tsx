@@ -17,12 +17,22 @@ import OrderDetailsComponent from './page/trade/order/orderdetails/OrderDetailsC
 import OrderLogPageComponent from './page/trade/order/orderlog/OrderLogComponent'
 import OrderSimpleComponent from './page/trade/order/OrderSimpleComponent'
 import UserProfileComponent from './page/user/UserProfileComponent'
-
-function App() {
+import { BrowserRouter, Routes, Route } from "react-router-dom";function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <ShopComponent/>
+    <BrowserRouter>
+      <Routes>
+          <Route index element={<HomeComponent />} />
+          <Route path="shop" element={<ShopComponent />} />
+          <Route path='product/:id' element={<ShopDetailsComponent/>}></Route>
+          <Route path='login' element={<LoginPageComponent></LoginPageComponent>}></Route>
+          <Route path='register' element={<RegisterPageComponent/>}></Route>
+          <Route path='forget-password' element={<ForgetPageComponent/>}></Route>
+          <Route path='cart' element={<CartPageComponent/>} />
+          <Route path='profile' element={<UserProfileComponent/>}/>
+      </Routes>
+    </BrowserRouter>
 
   )
 }

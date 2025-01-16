@@ -12,7 +12,7 @@ function ForgetPageComponent() {
                 <label htmlFor="floatingPassword">Email</label>
             </div>
             <div className="mb-2">
-                <a href="javascript:(0)">Login</a>
+                <a href="/login">Login</a>
             </div>
             <div className="btn btn-primary w-100">
                 Submit

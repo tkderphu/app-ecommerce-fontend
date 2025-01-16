@@ -13,7 +13,7 @@ class SpuService {
          
         return test;
     }
-    getDetailProductSpu(spuId: number) {
+    getDetailProductSpu(spuId: any) {
         const path = PATH + `/${spuId}`
         return Request.call(path, 'GET')
     }
