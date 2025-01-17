@@ -1,15 +1,76 @@
 import React, { Fragment, useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import { CommonResult } from "../../../common/common"
+import ModalComponent from "../../../component/ModalComponent"
 import FooterComponent from "../../../layout/FooterComponent"
 import HeaderComponent from "../../../layout/HeaderComponent"
-import { CartRespVO } from "../record/record.resp.vo"
+import { SellerRespVO } from "../../authen/record/record.resp.vo"
+import { CartItemRespVO, CartRespVO } from "../record/record.resp.vo"
 import cartService from "../service/cart.service"
 
 function CartPageComponent() {
     const [commonResult, setCommonResult] = useState<CommonResult<Array<CartRespVO>>>()
+    const [itemMap, setItemMap] = useState<Map<SellerRespVO, Array<CartItemRespVO>>>(new Map<SellerRespVO, Array<CartItemRespVO>>())
+    const [selectedItems, setSelectedItems] = useState<Map<number | undefined, any>>(new Map<number | undefined, any>);
 
 
-    const [selectedItems, setSelectedItems] = useState({});
+    // Handle select/deselect all items for a specific seller
+    const handleSelectAll = (cartResp: any, check: any) => {
+        const newItemMap = new Map(itemMap);  // Create a new instance of the Map to trigger re-render
+        if (check) {
+            const itemIds = cartResp.cartItems?.map((item: any) => item);
+            newItemMap.set(cartResp.seller, itemIds);
+        } else {
+            newItemMap.delete(cartResp.seller);
+        }
+        setItemMap(newItemMap);  // Update state with new map
+
+    };
+
+    // Handle select/deselect individual item
+    const handleSelectItem = (cartResp: any, item: any, check: any) => {
+        const newItemMap = new Map(itemMap);
+        let items = newItemMap.get(cartResp.seller) || [];
+
+        if (check) {
+            items.push(item);
+        } else {
+            items = items.filter(x => x.id !== item.id);
+        }
+
+        //@ts-ignore
+        document.getElementById("flexCheckChecked-seller" + cartResp.seller?.id).checked = false
+        newItemMap.set(cartResp.seller, items);
+        setItemMap(newItemMap);  // Update state with new map
+    };
+
+
+    const checkWhetherItemCurrentIsSelected = (seller: any, itemId: any) => {
+        const res = itemMap.get(seller)?.find((item) => {
+            return item.id === itemId
+        })
+        if (res) {
+            return true
+        }
+        return false
+    }
+
+    const totalProductIsSelected = () => {
+        let sum = 0
+        let totalPrice = 0
+        itemMap.forEach(value => {
+            value.forEach(item => {
+                sum += 1
+                //@ts-ignore
+                totalPrice += item.product?.price * item.quantity
+            })
+        })
+        return {
+            "sum": sum,
+            "totalPrice": totalPrice
+        }
+    }
+
 
     useEffect(() => {
         cartService.getAllItemFromCart().then(res => {
@@ -27,6 +88,7 @@ function CartPageComponent() {
     return (
         <div>
             <HeaderComponent />
+
             <div className="container-fluid fruite">
                 <div className="container py-5">
                     <div className="table-responsive">
@@ -46,20 +108,21 @@ function CartPageComponent() {
                                 {commonResult?.data && commonResult.data.map((cartResp) => {
                                     return <Fragment>
                                         <tr>
-                                            <td colSpan={2}><div className="border-secondary rounded-pill btn">
+                                            <td colSpan={3}><div className="border-secondary rounded-pill btn">
                                                 {cartResp.seller?.shopName}</div></td>
-                                            <td colSpan={2}>
+                                            <td colSpan={4}>
                                                 <div>
-                                                    <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" style={{ marginRight: "20px", width: "25px", height: "25px" }} />
-                                                    <label className="form-check-label" htmlFor="flexCheckChecked" style={{ marginTop: "5px", fontWeight: "bold" }}>
+                                                    <input className="form-check-input"
+                                                        type="checkbox" id={"flexCheckChecked-seller" + cartResp.seller?.id}
+                                                        onChange={(e: any) => {
+                                                            handleSelectAll(cartResp, e.target.checked)
+
+                                                        }}
+                                                        style={{ marginRight: "20px", width: "25px", height: "25px" }}
+                                                    />
+                                                    <label className="form-check-label" htmlFor={"flexCheckChecked-seller" + cartResp.seller?.id} style={{ marginTop: "5px", fontWeight: "bold" }}>
                                                         Choose all
                                                     </label>
-                                                </div>
-                                            </td>
-                                            <td colSpan={3}>
-                                                <div>
-                                                    <input type="text" className="border-0 border-bottom border-top rounded" placeholder="Coupon Code" style={{ marginRight: "15px" }} />
-                                                    <button className="btn border-secondary rounded-pill text-primary" type="button">Apply Coupon</button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -68,7 +131,12 @@ function CartPageComponent() {
                                                 <tr>
                                                     <td>
                                                         <div className="btn">
-                                                            <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" style={{ width: "25px", height: "25px" }} />
+                                                            <input className="form-check-input" type="checkbox"
+                                                                checked={checkWhetherItemCurrentIsSelected(cartResp.seller, item.id)}
+                                                                onChange={(e: any) => {
+                                                                    handleSelectItem(cartResp, item, e.target.checked)
+                                                                }}
+                                                                value="" id={"flexCheckChecked" + item.id} style={{ width: "25px", height: "25px" }} />
                                                         </div>
                                                     </td>
                                                     <th scope="row">
@@ -120,26 +188,25 @@ function CartPageComponent() {
                                 <div className="p-4">
                                     <h1 className="display-6 mb-4">Cart <span className="fw-normal">Total</span></h1>
                                     <div className="d-flex justify-content-between mb-4">
-                                        <h5 className="mb-0 me-4">Subtotal:</h5>
-                                        <p className="mb-0">$96.00</p>
-                                    </div>
-                                    <div className="d-flex justify-content-between mb-4">
-                                        <h5 className="mb-0 me-4">Nummber Of Coupon:</h5>
-                                        <p className="mb-0">456</p>
+                                        <h5 className="mb-0 me-4">Total Price:</h5>
+                                        <p className="mb-0">{totalProductIsSelected().totalPrice.toLocaleString()}</p>
                                     </div>
                                     <div className="d-flex justify-content-between">
-                                        <h5 className="mb-0 me-4">Shipping</h5>
-                                        <div className="">
-                                            <p className="mb-0">Flat rate: $3.00</p>
+                                        <h5 className="mb-0 me-4">Total Product</h5>
+                                        <div className="d-flex flex-column">
+                                            <p className="mb-0">{totalProductIsSelected().sum}</p>
+
                                         </div>
+
                                     </div>
-                                    <p className="mb-0 text-end">Shipping to Ukraine.</p>
                                 </div>
-                                <div className="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
-                                    <h5 className="mb-0 ps-4 me-4">Total</h5>
-                                    <p className="mb-0 pe-4">$99.00</p>
-                                </div>
-                                <button className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Proceed Checkout</button>
+                                <Link to={"/checkout"} state={itemMap}
+                                    onClick={() => {
+                                        alert("ccc")
+                                    }}
+                                    className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
+                                    type="button">Proceed Checkout
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -150,3 +217,6 @@ function CartPageComponent() {
     )
 }
 export default CartPageComponent
+
+
+

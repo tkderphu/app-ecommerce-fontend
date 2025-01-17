@@ -31,6 +31,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";function App() {
           <Route path='forget-password' element={<ForgetPageComponent/>}></Route>
           <Route path='cart' element={<CartPageComponent/>} />
           <Route path='profile' element={<UserProfileComponent/>}/>
+          <Route path='checkout' element={<CheckoutPageComponent/>}/>
       </Routes>
     </BrowserRouter>
 
