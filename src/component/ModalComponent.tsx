@@ -18,9 +18,7 @@ function ModalComponent(props: Props) {
                         <div className="modal-body">
                             {props.body}
                         </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
+                       
                     </div>
                 </div>
             </div>
