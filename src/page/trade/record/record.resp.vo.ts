@@ -19,7 +19,7 @@ export interface AppOrderSimpleRespVO  {
     orderStatus?: string
     createdDate?: string
     combinationShop?: boolean
-    products?: string
+    products: string
     addressDetails?: string
     paymentMode?: string
     paymentStatus?: string

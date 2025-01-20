@@ -9,7 +9,9 @@ import { SellerRespVO } from "../../authen/record/record.resp.vo"
 import { FormCreateAddress } from "../../user/AddressComponent"
 import { AddressRespVO } from "../../user/record/record.res.vo"
 import addressService from "../../user/service/address.service"
+import { OrderDetailsReqVO } from "../record/record.req.vo"
 import { CartItemRespVO } from "../record/record.resp.vo"
+import orderService from "../service/order.service"
 
 interface Value {
     seller?: SellerRespVO
@@ -17,7 +19,7 @@ interface Value {
 }
 function CheckoutPageComponent() {
     const [userAddresses, setUserAddresses] = useState<Array<AddressRespVO>>()
-    const mapItem: Map<SellerRespVO, Array<CartItemRespVO>> = useLocation().state
+    const mapItem: Map<SellerRespVO, Array<CartItemRespVO>> = history.state.itemMap
     const list = new Array<Value>()
     mapItem.forEach((value, key) => {
         list.push({
@@ -28,7 +30,7 @@ function CheckoutPageComponent() {
 
     useEffect(() => {
         addressService.getListAddress().then(res => {
-            console.log("address")
+            console.log("address: ", res.data.data)
             setUserAddresses(res.data.data)
         }).catch(err => {
             alert("Lỗi hệ thống")
@@ -56,6 +58,48 @@ function CheckoutPageComponent() {
         return sum
     }
 
+
+    const submitOrder = () => {
+        const cartIds: Array<number>  = new Array<number>()
+        list.forEach(value => {
+            value.items?.forEach(cart => {
+                //@ts-ignore
+                cartIds.push(cart.id)
+            })
+        })
+        const req : any = {
+            addressDetails: userAddresses?.filter(re => re.defaultAddress).at(0)?.fullAddress,
+            cartIds: cartIds,
+            couponIds: undefined
+        }
+        let checkWhetherUserSelectMethodPayment = false
+        document.querySelectorAll('input[type="radio"][name="payment"]').forEach((e: any) => {
+            if(e.checked) {
+                checkWhetherUserSelectMethodPayment = true
+                req.paymentMode = e.value
+                checkWhetherUserSelectMethodPayment = true
+            }
+        })
+
+        if(checkWhetherUserSelectMethodPayment) {
+            console.log("orderReq: ", JSON.stringify(req))
+            orderService.createOrder(req).then((res: any) => {
+                if(res.data.code === 200) {
+                    location.href = "/my-orders"
+                } else {
+                    alert("Lỗi service tạo đơn hàng: " +  res.data.message)
+                    
+                }
+            }).catch(err => {
+                alert("Lỗi hệ thống[Tạo đơn hàng]")
+                console.error("Lỗi hệ thống: ", err)
+            })
+        } else {
+            alert("Vui lòng chọn phương thức thanh toán")
+        }
+    }
+
+
     return (
         <div>
 
@@ -73,43 +117,77 @@ function CheckoutPageComponent() {
                             <div className="tab-content">
                                 {userAddresses?.length === 0 ? <div className="d-flex justify-content-around">
                                     <h4 style={{ color: "red" }}>Bạn chưa có địa chỉ</h4>
-                                    <ButtonModalComponent body={<FormCreateAddress defaultAddress={true} />} id={"form-create-address"} nameButton="Cập nhật địa chỉ" title="Cập nhật địa chỉ" />
-                                </div> : (<div className="d-flex justify-content-around align-items-center">
-                                    <div className="d-flex flex-column align-items-start">
-                                        <div style={{ fontSize: "25px" }}><b>Nguyen Quan Phu</b></div>
-                                        <div style={{ fontSize: "25px" }}><b>456946954</b></div>
-                                    </div>
-                                    <div>Thon phu luu xa trung nghia huyen yen phong tinh bac ninh</div>
-                                    <div>
-                                        <a className="border p-2" style={{ color: "red" }}>Mặc định</a>
-                                    </div>
-                                    <div>
-                                        <a href="javascript:(0)" data-toggle="modal" data-target={"#address-user"}>Thay đổi</a>
-                                        <ModalComponent
-                                            id={"address-user"}
-                                            title={"Địa chỉ"}
-                                            body={
-                                                <div>
-                                                    <nav>
-                                                        <div className="nav nav-tabs mb-3" id="nav-tab" role="tablist">
-                                                            <button className="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Tất cả địa chỉ</button>
-                                                            <button className="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Thêm địa chỉ</button>
-                                                        </div>
-                                                    </nav>
-                                                    <div className="tab-content" id="nav-tabContent">
-                                                        <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                                            gege
-                                                        </div>
-                                                        <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                                                            <FormCreateAddress />
-                                                        </div>
-                                                    </div>
+                                    <ButtonModalComponent body={<FormCreateAddress
+                                        defaultAddress={true}
+                                        func={(address: AddressRespVO) => {
+                                            setUserAddresses(new Array<AddressRespVO>(address))
+                                        }}
+                                    />} id={"form-create-address"} nameButton="Cập nhật địa chỉ" title="Cập nhật địa chỉ" />
+                                </div> : (
+                                    userAddresses?.map(address => {
+                                        if (address.defaultAddress) {
+                                            return (<div className="d-flex justify-content-around align-items-center flex-wrap">
+                                                <div className="d-flex flex-column align-items-start">
+                                                    <div style={{ fontSize: "25px" }}><b>{address.fullName}</b></div>
+                                                    <div style={{ fontSize: "25px" }}><b>{address.phoneNumber}</b></div>
                                                 </div>
+                                                <div style={{ fontSize: "16" }}>{address.fullAddress}</div>
+                                                <div>
+                                                    <a className="border p-2" style={{ color: "red" }}>Mặc định</a>
+                                                </div>
+                                                <div>
+                                                    <a href="javascript:(0)" data-toggle="modal" data-target={"#address-user"}>Thay đổi</a>
+                                                    <ModalComponent
+                                                        id={"address-user"}
+                                                        title={"Địa chỉ"}
+                                                        body={
+                                                            <div>
+                                                                <nav>
+                                                                    <div className="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+                                                                        <button className="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Tất cả địa chỉ</button>
+                                                                        <button className="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Thêm địa chỉ</button>
+                                                                    </div>
+                                                                </nav>
+                                                                <div className="tab-content" id="nav-tabContent">
+                                                                    <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                                                                        {userAddresses.map(res => {
+                                                                            return (
+                                                                                <div className="d-flex justify-content-between flex-wrap">
+                                                                                    <div className="d-flex flex-column align-items-start">
+                                                                                        <div>{res.fullName}</div>
+                                                                                        <div>{res.phoneNumber}</div>
+                                                                                    </div>
+                                                                                    <div>{res.fullAddress}</div>
+                                                                                    <div style={{color:"red"}}>{res.defaultAddress ? "Mặc định": ""}</div>
+                                                                                    <div>
+                                                                                        <button className="btn btn-primary">Cập nhật</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            )
+                                                                        })}
+                                                                    </div>
+                                                                    <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                                                        <FormCreateAddress
+                                                                            defaultAddress={false}
+                                                                            func={(address: AddressRespVO) => {
+                                                                                userAddresses?.push(address)
+                                                                                //@ts-ignore
+                                                                                setUserAddresses(new Array<AddressRespVO>(...userAddresses?.map(r => r)))
+                                                                            }}
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                                            }
-                                        />
-                                    </div>
-                                </div>)}
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>)
+                                        } else {
+                                            return ""
+                                        }
+                                    })
+                                )}
                             </div>
                         </nav>
 
@@ -275,8 +353,8 @@ function CheckoutPageComponent() {
                                                     <input type="radio"
                                                         className="form-check-input bg-primary border-0"
                                                         id="Transfer-1"
-                                                        name="payment" value="Transfer" />
-                                                    <label className="form-check-label" htmlFor="Transfer-1">Direct Bank Transfer</label>
+                                                        name="payment" value="BANK" />
+                                                    <label className="form-check-label" htmlFor="Transfer-1">Thanh toán qua ngân hàng</label>
                                                 </div>
 
                                             </div>
@@ -285,8 +363,8 @@ function CheckoutPageComponent() {
                                         <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
                                             <div className="col-12">
                                                 <div className="form-check text-start my-3">
-                                                    <input type="radio" className="form-check-input bg-primary border-0" id="Delivery-1" name="payment" value="Delivery" />
-                                                    <label className="form-check-label" htmlFor="Delivery-1">Cash On Delivery</label>
+                                                    <input type="radio" className="form-check-input bg-primary border-0" id="Delivery-1" name="payment" value="RECEIPT" />
+                                                    <label className="form-check-label" htmlFor="Delivery-1">Thanh toán khi nhận hàng</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -294,8 +372,8 @@ function CheckoutPageComponent() {
                                             <div className="col-12">
                                                 <div className="form-check text-start my-3">
                                                     <input type="radio" className="form-check-input bg-primary border-0"
-                                                        id="Paypal-1" name="APP" value="Paypal" />
-                                                    <label className="form-check-label" htmlFor="Paypal-1">In-app payments</label>
+                                                        id="Paypal-1" name="payment" value="APP" />
+                                                    <label className="form-check-label" htmlFor="Paypal-1">Thanh toán bằng tiền trong hệ thống</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -304,6 +382,7 @@ function CheckoutPageComponent() {
                                                 onClick={() => {
                                                     //@ts-ignore
                                                     if (userAddresses?.length != 0) {
+                                                        submitOrder()
                                                     } else {
                                                         alert("Bạn chưa cập nhật địa chỉ")
                                                     }

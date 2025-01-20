@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { CommonResult } from "../../../common/common"
+import { CommonResult, mapToObject } from "../../../common/common"
 import ModalComponent from "../../../component/ModalComponent"
 import FooterComponent from "../../../layout/FooterComponent"
 import HeaderComponent from "../../../layout/HeaderComponent"
@@ -13,6 +13,7 @@ function CartPageComponent() {
     const [itemMap, setItemMap] = useState<Map<SellerRespVO, Array<CartItemRespVO>>>(new Map<SellerRespVO, Array<CartItemRespVO>>())
     const [selectedItems, setSelectedItems] = useState<Map<number | undefined, any>>(new Map<number | undefined, any>);
 
+    
 
     // Handle select/deselect all items for a specific seller
     const handleSelectAll = (cartResp: any, check: any) => {
@@ -75,15 +76,27 @@ function CartPageComponent() {
     useEffect(() => {
         cartService.getAllItemFromCart().then(res => {
             if (res.data.code === 200) {
-                console.log(res.data)
                 setCommonResult(res.data)
+
+                const state = window.history.state
+                //@ts-ignore
+                const carts: Array<CartRespVO> = res.data.data
+                if(state.skuId) {
+                    carts?.forEach(cart => {
+                        const item = cart.cartItems?.filter(item => {
+                            return item.product?.id === state.skuId
+                        })?.at(0)
+                        if(item) {
+                            handleSelectItem(cart, item, true)
+                        }
+                    })
+                }
             } else {
                 alert(res.data.message)
             }
-        }).catch(err => {
-            alert("Lỗi hệ thống")
-            console.error(err)
         })
+
+       
     }, [])
     return (
         <div>
@@ -108,8 +121,14 @@ function CartPageComponent() {
                                 {commonResult?.data && commonResult.data.map((cartResp) => {
                                     return <Fragment>
                                         <tr>
-                                            <td colSpan={3}><div className="border-secondary rounded-pill btn">
-                                                {cartResp.seller?.shopName}</div></td>
+                                            <td colSpan={3}><a className="border-secondary rounded-pill btn"
+                                                onClick={() => {
+                                                    const path = "/shop?seller=" + cartResp.seller?.shopName
+                                                    history.pushState({"sellerId": cartResp.seller?.id}, "", path)
+                                                    window.location.href = path
+                                                }}
+                                            >
+                                                {cartResp.seller?.shopName}</a></td>
                                             <td colSpan={4}>
                                                 <div>
                                                     <input className="form-check-input"
@@ -200,13 +219,25 @@ function CartPageComponent() {
 
                                     </div>
                                 </div>
-                                <Link to={"/checkout"} state={itemMap}
+                                <a href="javascript:(0)" 
                                     onClick={() => {
-                                        alert("ccc")
+                                        let check = false
+                                        itemMap.forEach(item => {
+                                            if(item.length > 0) {
+                                                check = true
+                                            }
+                                        })
+                                        if(check) {
+                                            // console.log(itemM)
+                                            history.pushState({"itemMap": itemMap}, "", "/checkout")
+                                            location.href = "/checkout"
+                                        } else {
+                                            alert("Vui lòng chọn sản phẩm")
+                                        }
                                     }}
                                     className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
                                     type="button">Proceed Checkout
-                                </Link>
+                                </a>
                             </div>
                         </div>
                     </div>

@@ -9,8 +9,9 @@ export interface CartUpdateQuantityReqVO {
 
 
 export interface OrderDetailsReqVO  {
-    cartIds?: Set<number>
-    paymentMode?: "BANK" | "RECEIPT"
-    addressDetails?: number
-    couponIds?: Set<number>
+    cartIds?: Array<number>
+    paymentMode?: string
+    addressDetails?: string
+    couponIds?: Array<number>
 }
+

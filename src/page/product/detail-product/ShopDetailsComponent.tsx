@@ -18,9 +18,9 @@ function ShopDetailsComponent() {
     const [countProduct, setCountProduct] = useState<number>(1)
     const [productDetail, setProductDetail] = useState<AppProductSpuDetailsRespVO>()
     const [sku, setSku] = useState<AppProductSkuRespVO | undefined>()
-    const { id } = useParams(); 
+    const { id } = useParams();
     useEffect(() => {
-        
+
         spuService.getDetailProductSpu(id).then(res => {
             if (res.data.code === 200) {
 
@@ -142,8 +142,8 @@ function ShopDetailsComponent() {
                                                                         })
                                                                         const res: Pair<number, AppProductSkuRespVO> | undefined = getSku(sumId)
                                                                         console.log("sku: ", res)
-                                                                         //@ts-ignore
-                                                                         setSku(res?.value)
+                                                                        //@ts-ignore
+                                                                        setSku(res?.value)
                                                                     }}
                                                                     value={value.id}
                                                                     name={"sku-property-" + pair.key?.id} className="custom-control-input" />
@@ -184,14 +184,14 @@ function ShopDetailsComponent() {
                                     <div className="d-flex justify-content-around flex-wrap">
                                         <a href="javascript:(0)"
                                             onClick={() => {
-                                                if(sku) {
+                                                if (sku) {
                                                     const cartItemReq: CartCreateReqVO = {
                                                         productSkuId: sku.id,
                                                         quantity: countProduct
                                                     }
                                                     cartService.addItemIntoCart(cartItemReq).then(res => {
-                                                        if(res.data.code != 200) {
-                                                           alert(res.data.message)
+                                                        if (res.data.code != 200) {
+                                                            alert(res.data.message)
                                                         } else {
                                                             console.log(res.data)
                                                         }
@@ -202,15 +202,38 @@ function ShopDetailsComponent() {
                                                 } else {
                                                     alert("Sản phẩm đã hết")
                                                 }
-                                            }}  
+                                            }}
                                             className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
                                             <i className="fa fa-shopping-bag me-2 text-primary">
                                             </i>Thêm vào giỏ hàng</a>
 
-                                        <a href="javascript:(0)" className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                                        <a href="javascript:(0)"
+                                            onClick={() => {
+                                                if (sku) {
+                                                    const cartItemReq: CartCreateReqVO = {
+                                                        productSkuId: sku.id,
+                                                        quantity: countProduct
+                                                    }
+                                                    cartService.addItemIntoCart(cartItemReq).then(res => {
+                                                        if (res.data.code != 200) {
+                                                            alert(res.data.message)
+                                                        } else {
+                                                            window.history.pushState({ "skuId": cartItemReq.productSkuId }, "", "/cart")
+                                                            window.location.href = "/cart"
+                                                        }
+                                                    }).catch(err => {
+                                                        alert("Lỗi hệ thống")
+                                                        console.error(err)
+                                                    })
+                                                } else {
+                                                    alert("Sản phẩm đã hết")
+                                                }
+
+                                            }}
+                                            className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
                                             <i className="fa fa-shopping-bag me-2 text-primary">
                                             </i> Mua hàng</a>
-                                            
+
                                     </div>
                                 </div>
                             </div>
@@ -228,8 +251,17 @@ function ShopDetailsComponent() {
                                                 <div className="d-flex flex-column">
                                                     <div className="mb-3"><span style={{ color: "black", fontSize: "22px" }}>{productDetail?.seller?.shopName}</span></div>
                                                     <div className="d-flex w-100">
-                                                        <a href="javascript:(0)" className="border" style={{ fontSize: "20px", paddingRight: "30px", paddingLeft: "30px" }}>Chat</a>
-                                                        <a href="javascript:(0)" className="border" style={{ fontSize: "20px", paddingRight: "30px", paddingLeft: "30px", marginLeft: "20px" }}> See shop</a>
+                                                        <a href="javascript:(0)" className="border" style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px" }}>Nhắn tin</a>
+                                                        <a href="javascript:(0)"    
+                                                        onClick={() => {
+                                                            const path = "/shop?seller=" + productDetail?.seller?.shopName
+                                                            history.pushState({"sellerId": productDetail?.seller?.id}, "", path)
+                                                            window.location.href = path
+                                                        }}
+                                                        className="border" 
+                                                        style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px", marginLeft: "20px" }}
+                                                        
+                                                        >Xem cửa hàng</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -252,6 +284,10 @@ function ShopDetailsComponent() {
                                                 </div>
                                                 <div className="d-flex mb-3 col-4 justify-content-between" >
                                                     <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tỷ lệ phản hồi</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.replyPercent}%</div>
+                                                </div>
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tỷ lệ hủy đơn</div>
                                                     <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.replyPercent}%</div>
                                                 </div>
                                             </div>
@@ -382,4 +418,4 @@ function ShopDetailsComponent() {
         </div>
     )
 }
-export default ShopDetailsComponent
+export default ShopDetailsComponent 

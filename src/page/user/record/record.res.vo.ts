@@ -7,5 +7,11 @@ export interface AddressRespVO {
     detailAddress?: string
     fullName?: string
     phoneNumber?: string
-
+    fullAddress?: string
+}
+export interface WalletRespVO {
+    id?: number
+    username?: string
+    amount?: number
+    walletType?: string
 }

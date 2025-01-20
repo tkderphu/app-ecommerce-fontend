@@ -1,7 +1,6 @@
 interface Props {
     orderId: number
 }
-import './OrderLogComponent.css'
 function OrderLogComponent(props: Props) {
     return (
         <div >

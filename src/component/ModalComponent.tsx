@@ -7,7 +7,7 @@ interface Props {
 function ModalComponent(props: Props) {
     return (
         <div className="modal fade " id={props.id} tabIndex={-1} role="dialog" aria-labelledby={props.id + "label"} aria-hidden="true">
-                <div className="modal-dialog modal-lg" role="document">
+                <div className="modal-dialog modal-lg modal-dialog-scrollable" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id={props.id + "label"}>{props.title}</h5>

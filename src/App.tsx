@@ -13,12 +13,13 @@ import ChatSupportComponent from './page/realtime/ChatSupportComponent'
 import LiveStreamPageComponent from './page/realtime/LivestreamComponent'
 import CartPageComponent from './page/trade/cart/CartComponent'
 import CheckoutPageComponent from './page/trade/order/CheckoutPageComponent'
-import OrderDetailsComponent from './page/trade/order/orderdetails/OrderDetailsComponent'
-import OrderLogPageComponent from './page/trade/order/orderlog/OrderLogComponent'
+import OrderDetailsComponent from './page/trade/order/OrderDetailsComponent'
+import OrderLogPageComponent from './page/trade/order/OrderLogComponent'
 import OrderSimpleComponent from './page/trade/order/OrderSimpleComponent'
 import UserProfileComponent from './page/user/UserProfileComponent'
-import { BrowserRouter, Routes, Route } from "react-router-dom";function App() {
-  const [count, setCount] = useState(0)
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+function App() {
+
 
   return (
     <BrowserRouter>
@@ -32,6 +33,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";function App() {
           <Route path='cart' element={<CartPageComponent/>} />
           <Route path='profile' element={<UserProfileComponent/>}/>
           <Route path='checkout' element={<CheckoutPageComponent/>}/>
+          <Route path='my-orders' element={<OrderSimpleComponent/>}/>
+          <Route path='livestream' element={<LiveStreamPageComponent/>}/>
+        
       </Routes>
     </BrowserRouter>
 

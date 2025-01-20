@@ -1,6 +1,7 @@
 import ButtonModalComponent from "../../component/ButtonModalComponent"
 import FooterComponent from "../../layout/FooterComponent"
 import HeaderComponent from "../../layout/HeaderComponent"
+import OrderSimpleComponent from "../trade/order/OrderSimpleComponent"
 
 function UserProfileComponent() {
     return (
@@ -33,16 +34,18 @@ function UserProfileComponent() {
                             <ButtonModalComponent
                                 body={"test"}
                                 id="test"
-                                nameButton="Comments"
-                                title="Your comments"
+                                nameButton="Đánh giá của bạn"
+                                title="Đánh giá của bạn"
                                 key={"1"}
                             />
                             <br/>
                             <ButtonModalComponent
-                                body={"test"}
+                                body={
+                                    <OrderSimpleComponent/>
+                                }
                                 id="test1"
-                                nameButton="Orders"
-                                title="Your Orders"
+                                nameButton="Đơn hàng của bạn"
+                                title="Đơn hàng của bạn"
                                 key={"2"}
                             />
                             <br/>

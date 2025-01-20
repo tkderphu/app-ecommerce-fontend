@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { CommonResult, PageResult } from "../../common/common";
 import FooterComponent from "../../layout/FooterComponent";
 import HeaderComponent from "../../layout/HeaderComponent";
@@ -48,18 +48,18 @@ function HomeComponent() {
             console.error("Server error: ", err)
         })
     }
-    return <div className="container-fluid">
+    return <Fragment >
         <HeaderComponent />
         {/* <!-- Hero Start --> */}
-        <div className="container-fluid py-5 mb-5 hero-header">
-            <div className="container py-5">
+        <div className="container-fluid mb-5 hero-header">
+            <div className="container">
                 <div className="row g-5 align-items-center">
                     <div className="col-md-12 col-lg-7">
                         <h4 className="mb-3 text-secondary">100% Organic Foods</h4>
                         <h1 className="mb-5 display-3 text-primary">Organic Veggies & Fruits Foods</h1>
                         <div className="position-relative mx-auto">
                             <input className="form-control border-2 border-secondary w-75 py-3 px-4 rounded-pill" type="text" placeholder="Search" />
-                            <button type="submit" className="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100" style={{ top: "0", right: "25%" }}>Submit Now</button>
+                            <button type="submit" className="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100" style={{ top: "0", right: "25%" }}>Tìm kiếm</button>
                         </div>
                     </div>
                     <div className="col-md-12 col-lg-5">
@@ -120,7 +120,7 @@ function HomeComponent() {
 
 
         <FooterComponent />
-    </div>
+    </Fragment>
 }
 export default HomeComponent
 

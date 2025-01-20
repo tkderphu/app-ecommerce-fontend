@@ -30,11 +30,19 @@ function ShopComponent() {
     const [condition, setCondition] = useState<Map<string, string>>(new Map<string, string>())
     const [categoryIds, setCategoryIds] = useState<Array<number>>(new Array<number>())
     const [priceDataSearchVO, setPriceDataSearchVO] = useState<PriceDataSearchVO>()
+    
     let pageSpuReq: PageProductSpuReqVO = {
         limit: 30,
         page: 1
     }
+
+
     useEffect(() => {
+        if(history.state.sellerId) {
+            condition.set("seller", history.state.sellerId)
+            //@ts-ignore
+            pageSpuReq.condition =mapToObject(condition)
+        } 
         fetchProduct()
         fetchCategory()
         fetchBrand()
@@ -125,7 +133,7 @@ function ShopComponent() {
                                         <button
                                             id="search-icon-1"
                                             onClick={() => {
-                                                console.log("req: ", pageSpuReq)
+                                                console.log("Condition: ", condition)
                                             }}
                                             className="input-group-text p-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style={{ cursor: "pointer" }} viewBox="0 0 16 16">

@@ -21,6 +21,7 @@ export class Request {
             headers: headers
         };
        
+        console.log("data config: ", config)
         return axios.request(config)
     }
 
