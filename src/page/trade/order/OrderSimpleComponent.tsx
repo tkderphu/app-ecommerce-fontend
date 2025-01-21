@@ -1,7 +1,10 @@
+import { url } from "inspector"
 import { Fragment, useEffect, useState } from "react"
 import ButtonModalComponent from "../../../component/ButtonModalComponent"
 import FooterComponent from "../../../layout/FooterComponent"
 import HeaderComponent from "../../../layout/HeaderComponent"
+import { OrderPaymentReqVO } from "../../finance/record/record.req.vo"
+import paymentService from "../../finance/service/payment.service"
 import { AppOrderSimpleRespVO } from "../record/record.resp.vo"
 import orderService from "../service/order.service"
 import OrderDetailsComponent from "./OrderDetailsComponent"
@@ -23,6 +26,30 @@ function OrderSimpleComponent(props: Props) {
             console.error("Lỗi hệ thống: ", err)
         })
     }, [])
+    const paymentOrder = (paymentMode?: string, orderId?: number) => {
+        const orderPaymentReq: OrderPaymentReqVO = {
+            orderId: orderId,
+            chanelType: paymentMode === "APP" ? 'APP' : 'VNPAY',
+            content: "Thanh toán đơn hàng với id đơn hàng là: " + orderId
+        }
+        console.log(orderPaymentReq)
+        paymentService.payOrder(orderPaymentReq).then(res => {
+            if(res.data.code === 200) {
+                const response : any = res.data.data
+                if ((typeof response) === "string") {
+                    
+                } else {
+                    location.href = "/my-wallet"
+                }
+            } else {
+                alert("Lỗi service[Payment Order]: " + res.data.message)
+                
+            } 
+        }).catch(err => {
+            alert("Lỗi hệ thống[Payment Order]")
+            console.error("[ERRORR PAYMENT ORDER]", err)
+        })
+    }
     return (
         <Fragment>
             <HeaderComponent />
@@ -52,8 +79,13 @@ function OrderSimpleComponent(props: Props) {
                                 <th scope="row">{order.combinationShop ? "True" : "False"}</th>
                                 <td>{order.addressDetails}</td>
                                 <td>{order.totalPrice?.toLocaleString()}</td>
-                                <td>{order.paymentMode}</td>
-                                <th scope="row">{order.paymentStatus}</th>
+                                <td>
+                                {order.paymentMode}
+                                {order.paymentMode != "RECEIPT" && order.paymentStatus?.key === "PROCESSING" && <div className="btn btn-primary" onClick={() => {
+                                    paymentOrder(order.paymentMode, order.id)
+                                }}>Payment</div>}
+                                </td>
+                                <th scope="row">{order.paymentStatus?.key === "SUCCESS"? <b className="text-success">{order.paymentStatus.value}</b> : order.paymentStatus?.value}</th>
                                 <th scope="row">{order.orderStatus}</th>
                                 <th >
                                     <ButtonModalComponent

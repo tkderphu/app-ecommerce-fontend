@@ -13,5 +13,5 @@ export interface WalletRespVO {
     id?: number
     username?: string
     amount?: number
-    walletType?: string
+    walletType?: "USER_MEMBER" | "SYSTEM"
 }

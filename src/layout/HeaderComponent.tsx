@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { getToken } from "../common/common"
 import ModalComponent from "../component/ModalComponent"
 import { WalletRespVO } from "../page/user/record/record.res.vo"
-import walletService from "../page/user/service/wallet.service"
+import walletService from "../page/finance/service/wallet.service"
 
 
 function HeaderComponent() {

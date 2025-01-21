@@ -1,3 +1,4 @@
+import { Pair } from "../../../common/common"
 import { SellerRespVO } from "../../authen/record/record.resp.vo"
 
 export interface CartItemRespVO {
@@ -22,7 +23,7 @@ export interface AppOrderSimpleRespVO  {
     products: string
     addressDetails?: string
     paymentMode?: string
-    paymentStatus?: string
+    paymentStatus?: Pair<"PROCESSING" | "SUCCESS", string>
 }
 export interface OrderLineItemRespVO {
     product?: any
