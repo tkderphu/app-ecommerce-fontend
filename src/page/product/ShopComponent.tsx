@@ -114,6 +114,53 @@ function ShopComponent() {
     return (
         <div>
             <HeaderComponent />
+            {/* <div className="d-flex align-items-center">
+                                            <div className="col-5 d-flex align-items-center">
+                                                <img src={productDetail?.seller?.shopImage} className="border rounded-circle" style={{ marginRight: "20px" }} width={"100px"} />
+                                                <div className="d-flex flex-column">
+                                                    <div className="mb-3"><span style={{ color: "black", fontSize: "22px" }}>{productDetail?.seller?.shopName}</span></div>
+                                                    <div className="d-flex w-100">
+                                                        <a href="javascript:(0)" className="border" style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px" }}>Nhắn tin</a>
+                                                        <a href="javascript:(0)"    
+                                                        onClick={() => {
+                                                            const path = "/shop?seller=" + productDetail?.seller?.shopName
+                                                            history.pushState({"sellerId": productDetail?.seller?.id}, "", path)
+                                                            window.location.href = path
+                                                        }}
+                                                        className="border" 
+                                                        style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px", marginLeft: "20px" }}
+                                                        
+                                                        >Xem cửa hàng</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="d-flex flex-wrap align-items-center mt-3">
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Đánh giá</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numComment}</div>
+                                                </div>
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Sản phẩm</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numProduct}</div>
+                                                </div>
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tham gia</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.joined}</div>
+                                                </div>
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Người theo dõi</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numFollow}</div>
+                                                </div>
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tỷ lệ phản hồi</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.replyPercent}%</div>
+                                                </div>
+                                                <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tỷ lệ hủy đơn</div>
+                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.replyPercent}%</div>
+                                                </div>
+                                            </div>
+                                        </div> */}
             <div className="container-fluid" >
                 <div className="container py-5">
                     <div className="row g-4">

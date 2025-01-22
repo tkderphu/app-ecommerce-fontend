@@ -14,7 +14,7 @@ import LiveStreamPageComponent from './page/realtime/LivestreamComponent'
 import CartPageComponent from './page/trade/cart/CartComponent'
 import CheckoutPageComponent from './page/trade/order/CheckoutPageComponent'
 import OrderDetailsComponent from './page/trade/order/OrderDetailsComponent'
-import OrderLogPageComponent from './page/trade/order/OrderLogComponent'
+import OrderLogPageComponent from './page/trade/order/log/OrderLogComponent'
 import OrderSimpleComponent from './page/trade/order/OrderSimpleComponent'
 import UserProfileComponent from './page/user/UserProfileComponent'
 import { BrowserRouter, Routes, Route } from "react-router-dom";

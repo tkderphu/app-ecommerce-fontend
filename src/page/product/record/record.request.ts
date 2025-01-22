@@ -6,3 +6,11 @@ export class PageProductSpuReqVO extends PagePram{
     sortName?: string
     sortType?: number
 }
+export interface ProductSkuSimpleRespVO {
+    id?: number
+    price: number
+    image?: string
+    quantity?: string
+    name?: string
+    properties?: string
+}

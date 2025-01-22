@@ -8,7 +8,7 @@ import paymentService from "../../finance/service/payment.service"
 import { AppOrderSimpleRespVO } from "../record/record.resp.vo"
 import orderService from "../service/order.service"
 import OrderDetailsComponent from "./OrderDetailsComponent"
-import OrderLogComponent from "./OrderLogComponent"
+import OrderLogComponent from "./log/OrderLogComponent"
 interface Props {
     order?: Array<AppOrderSimpleRespVO>
 }
@@ -34,17 +34,20 @@ function OrderSimpleComponent(props: Props) {
         }
         console.log(orderPaymentReq)
         paymentService.payOrder(orderPaymentReq).then(res => {
-            if(res.data.code === 200) {
-                const response : any = res.data.data
+            if (res.data.code === 200) {
+                const response: any = res.data.data
                 if ((typeof response) === "string") {
-                    
+                    const elementA: HTMLAnchorElement = document.createElement("a")
+                    elementA.href = response
+                    elementA.target = "_blank"
+                    elementA.click()
                 } else {
                     location.href = "/my-wallet"
                 }
             } else {
                 alert("Lỗi service[Payment Order]: " + res.data.message)
-                
-            } 
+
+            }
         }).catch(err => {
             alert("Lỗi hệ thống[Payment Order]")
             console.error("[ERRORR PAYMENT ORDER]", err)
@@ -71,48 +74,50 @@ function OrderSimpleComponent(props: Props) {
                 </thead>
                 <tbody>
                     {orders?.map(order => {
-                        return  <tr>
-                                <th scope="row">{order.id}</th>
-                                <td dangerouslySetInnerHTML={{__html: order.products}}></td>
-                                <td>{order.totalProduct}</td>
-                                <td>{order.createdDate}</td>
-                                <th scope="row">{order.combinationShop ? "True" : "False"}</th>
-                                <td>{order.addressDetails}</td>
-                                <td>{order.totalPrice?.toLocaleString()}</td>
-                                <td>
+                        return <tr>
+                            <th scope="row">{order.id}</th>
+                            <td dangerouslySetInnerHTML={{ __html: order.products }}></td>
+                            <td>{order.totalProduct}</td>
+                            <td>{order.createdDate}</td>
+                            <th scope="row">{order.combinationShop ? "True" : "False"}</th>
+                            <td>{order.addressDetails}</td>
+                            <td>{order.totalPrice?.toLocaleString()}</td>
+                            <td>
                                 {order.paymentMode}
                                 {order.paymentMode != "RECEIPT" && order.paymentStatus?.key === "PROCESSING" && <div className="btn btn-primary" onClick={() => {
                                     paymentOrder(order.paymentMode, order.id)
                                 }}>Payment</div>}
-                                </td>
-                                <th scope="row">{order.paymentStatus?.key === "SUCCESS"? <b className="text-success">{order.paymentStatus.value}</b> : order.paymentStatus?.value}</th>
-                                <th scope="row">{order.orderStatus}</th>
-                                <th >
-                                    <ButtonModalComponent
-                                        body={<div>
-                                            <nav>
-                                                <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                                                    <button className="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Details</button>
-                                                    <button className="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Logs</button>
-                                                </div>
-                                            </nav>
-                                            <div className="tab-content" id="nav-tabContent">
-                                                <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                                    <OrderDetailsComponent
-                                                        orderId={22}
-                                                    />
-                                                </div>
-                                                <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                                                    <OrderLogComponent orderId={22} />
-                                                </div>
+                            </td>
+                            <th scope="row">{order.paymentStatus?.key === "SUCCESS" ? <b className="text-success">{order.paymentStatus.value}</b> : order.paymentStatus?.value}</th>
+                            <th scope="row">{order.orderStatus?.value?.key}</th>
+                            <th >
+                                <ButtonModalComponent
+                                    body={<div>
+                                        <nav>
+                                            <div className="nav nav-tabs" id={"nav-tab-" + order.id} role="tablist">
+                                                <a className="nav-item nav-link active" id={"nav-order-tab-"+ order.id} data-toggle="tab" href={"#nav-order-" + order.id} role="tab" aria-controls={"nav-order-" + order.id} aria-selected="true">Đơn hàng</a>
+                                                <a className="nav-item nav-link" id={"nav-delivery-tab-" +order.id} data-toggle="tab" href={"#nav-delivery-" + order.id} role="tab" aria-controls={"nav-delivery-" + order.id} aria-selected="false">Chi tiết vận chuyển</a>
                                             </div>
-                                        </div>}
-                                        title={"Order details"}
-                                        nameButton="See details order"
-                                        id={"order-details"}
-                                    />
-                                </th>
-                            </tr>
+                                        </nav>
+                                        <div className="tab-content" id="nav-tabContent">
+                                            <div className="tab-pane fade show active" id={"nav-order-" + order.id} role="tabpanel" aria-labelledby={"nav-order-tab-"+ order.id}>
+                                                <OrderDetailsComponent
+                                                    orderId={order.id}
+                                                />
+
+                                            </div>
+                                            <div className="tab-pane fade mt-4" id={"nav-delivery-" + order.id} role="tabpanel" aria-labelledby={"nav-delivery-tab-" +order.id}> 
+                                                <OrderLogComponent orderId={order.id} orderStatus = {order.orderStatus} />
+                                            </div>
+                                        </div>
+
+                                    </div>}
+                                    title={"Order details"}
+                                    nameButton="See details order"
+                                    id={"order-details-" + order.id}
+                                />
+                            </th>
+                        </tr>
                     })}
                 </tbody>
             </table>

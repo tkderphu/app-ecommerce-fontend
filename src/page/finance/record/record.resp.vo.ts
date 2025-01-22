@@ -8,4 +8,5 @@ export interface TransactionRespVO {
     errorMessage?: string
     transactionStatus?: string
     createdDate?: string
+    paymentMode?: string
 }

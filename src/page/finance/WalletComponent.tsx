@@ -86,6 +86,7 @@ function WalletComponent() {
                             <th scope="col">Nội dung thanh toán</th>
                             <th scope="col">Nội dung khi thanh toán lỗi</th>
                             <th scope="col">Số tiền thanh toán</th>
+                            <th scope="col">Phương thức thanh toán</th>
                             <th scope="col">Trạng thái giao dịch</th>
                         </tr>
                     </thead>
@@ -99,6 +100,7 @@ function WalletComponent() {
                                 <td>{transaction.transferContent}</td>
                                 <td>{transaction.errorMessage}</td>
                                 <td>{transaction.amountTransfer?.toLocaleString()}</td>
+                                <td>{transaction.paymentMode}</td>
                                 <td>{transaction.transactionStatus === "SUCCESS" ? <p className="text-success">Thành công</p> : <p className="text-danger">Thất bại</p>}</td>
                             </tr>
                         })}

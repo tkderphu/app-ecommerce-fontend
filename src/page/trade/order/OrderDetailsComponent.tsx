@@ -1,52 +1,90 @@
+import { Fragment, useEffect, useState } from "react"
+import { OrderDetailsReqVO } from "../record/record.req.vo"
+import { AppOrderDetailsRespVO } from "../record/record.resp.vo"
+import orderService from "../service/order.service"
+
 interface Props {
-    orderId: number
+    orderId?: number
 }
 function OrderDetailsComponent(props: Props) {
+
+    const [orderDetails, setOrderDetails] = useState<AppOrderDetailsRespVO>()
+    useEffect(() => {
+        orderService.getOrderDetails(props.orderId)
+            .then(res => {
+                if (res.data.code === 200) {
+                    setOrderDetails(res.data.data)
+                } else {
+                    alert("Lỗi service[get order details]: " + res.data.message)
+                }
+            }).catch(err => {
+                alert("Lỗi hệ thống [get order details]")
+                console.error("[get order details]: ", err)
+            })
+    }, [])
+
     return (
-        <div className="container-fluid my-5 d-sm-flex justify-content-center">
-            <div className="card px-2">
-                <div className="card-header bg-white">
-                    <div className="row justify-content-between">
-                        <div className="col">
-                            <p className="text-muted"> Order ID  <span className="font-weight-bold text-dark">1222528743</span></p>
-                            <p className="text-muted"> Place On <span className="font-weight-bold text-dark">12,March 2019</span> </p></div>
-                        <div className="flex-col my-auto">
-                            <h6 className="ml-auto mr-3">
-                                <a href="#">View Details</a>
-                            </h6>
-                        </div>
-                    </div>
+        <Fragment>
+            <div className="d-flex mt-3 flex-wrap justify-content-around">
+                <div className="d-flex flex-column align-items-start">
+                    <div className="text-mute"><span>Mã đơn hàng: </span>{orderDetails?.id}</div>
+                    <div className="text-mute"><span>Ngày đặt hàng: </span>{orderDetails?.createdDate}</div>
                 </div>
-                <div className="card-body">
-                    <div className="media flex-column flex-sm-row">
-                        <div className="media-body ">
-                            <h5 className="bold">Blade High Heels Sandals</h5>
-                            <p className="text-muted"> Qt: 1 Pair</p>
-                            <h4 className="mt-3 mb-4 bold"> <span className="mt-5">&#x20B9;</span> 1,500 <span className="small text-muted"> via (COD) </span></h4>
-                            <p className="text-muted">Tracking Status on: <span className="Today">11:30pm, Today</span></p>
-                            <button type="button" className="btn  btn-outline-primary d-flex">Reached Hub, Delhi</button>
-                        </div><img className="align-self-center img-fluid" src="https://i.imgur.com/bOcHdBa.jpg" width="180 " height="180"/>
-                    </div>
+                <div className="d-flex flex-column align-items-start">
+                    <div><span>Tổng giá trị: </span>{orderDetails?.totalPrice?.toLocaleString()}</div>
+                    <div><span>Phương thức thanh toán: </span>{orderDetails?.paymentMode}</div>
                 </div>
-                <div className="row px-3">
-                    <div className="col">
-                        <ul id="progressbar" >
-                            <li className="step0 active " id="step1">PLACED</li>
-                            <li className="step0 active text-center" id="step2">SHIPPED</li>
-                            <li className="step0  text-muted text-right" id="step3">DELIVERED</li>
-                        </ul>
-                    </div>
+                <div className="d-flex flex-column align-items-start mt-3">
+                    <div><span>Trạng thái thanh toán: </span>{orderDetails?.paymentStatus?.value}</div>
+                    <div><span>Trạng thái đơn hàng: </span>{orderDetails?.orderStatus?.value?.key}</div>
                 </div>
-                <div className="card-footer  bg-white px-sm-3 pt-sm-4 px-0">
-                    <div className="row text-center  ">
-                        <div className="col my-auto  border-line "><h5 >Track</h5></div>
-                        <div className="col  my-auto  border-line "><h5>Cancel</h5></div>
-                        <div className="col my-auto   border-line "><h5>Pre-pay</h5></div>
-                        <div className="col  my-auto mx-0 px-0 "><img className="img-fluid cursor-pointer" src="https://img.icons8.com/ios/50/000000/menu-2.png" width="30" height="30"/></div>
-                    </div>
-                </div>
+
+            </div >
+            <div className="mt-3">
+                Địa chỉ nhận hàng: {orderDetails?.addressDetails}
             </div>
-        </div>
+            {orderDetails?.lineItems?.map(lineItem => {
+                return <Fragment>
+                    <div className="mt-3 btn btn-primary mb-2" onClick={() => {
+                        const path = "/shop?seller=" + lineItem.seller?.shopName
+                        history.pushState({"sellerId": lineItem.seller?.id}, "", path)
+                        location.href = path
+                    }}>Người bán: <span  style={{color:"red"}}>{lineItem.seller?.shopName}</span></div>
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Mã sản phẩm</th>
+                                <th scope="col">Tên sản phẩm</th>
+                                <th scope="col">Loại sản phẩm</th>
+                                <th scope="col">Giá</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col">Tổng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {lineItem.items?.map(item => {
+                                return <tr>
+                                    <th scope="row">{item.id}</th>
+                                    <td>{item.product?.name}</td>
+                                    <td>{item.product?.properties}</td>
+                                    <td>{item.product?.price?.toLocaleString()}</td>
+                                    <td>{item.quantity}</td>
+                                    <td>{(item.quantity * item.product?.price).toLocaleString()}</td>
+                                </tr>
+                            })}
+                            <tr>
+                                <td colSpan={5}>Phiếu giảm giá</td>
+                                <td>{lineItem.coupon ? "" : "0"}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan={5}>Tổng</td>
+                                <td>{lineItem.totalPrice?.toLocaleString()}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </Fragment>
+            })}
+        </Fragment>
     )
 }
 export default OrderDetailsComponent
