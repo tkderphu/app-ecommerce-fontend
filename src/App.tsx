@@ -19,6 +19,7 @@ import OrderSimpleComponent from './page/trade/order/OrderSimpleComponent'
 import UserProfileComponent from './page/user/UserProfileComponent'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WalletComponent from './page/finance/WalletComponent'
+import OrderDetailsPageComponent from './page/trade/order/OrderDetailsPageComponent'
 function App() {
 
 
@@ -26,6 +27,7 @@ function App() {
     <BrowserRouter>
       <Routes>
           <Route index element={<HomeComponent />} />
+
           <Route path="shop" element={<ShopComponent />} />
           <Route path='product/:id' element={<ShopDetailsComponent/>}></Route>
           <Route path='login' element={<LoginPageComponent></LoginPageComponent>}></Route>
@@ -35,6 +37,7 @@ function App() {
           <Route path='profile' element={<UserProfileComponent/>}/>
           <Route path='checkout' element={<CheckoutPageComponent/>}/>
           <Route path='my-orders' element={<OrderSimpleComponent/>}/>
+          <Route path='my-orders/:orderId' element={<OrderDetailsPageComponent/>}/>
           <Route path='livestream' element={<LiveStreamPageComponent/>}/>
           <Route path='my-wallet' element={<WalletComponent/>}/>
         

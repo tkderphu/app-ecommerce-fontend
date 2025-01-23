@@ -4,7 +4,7 @@ import { AppOrderDetailsRespVO } from "../record/record.resp.vo"
 import orderService from "../service/order.service"
 
 interface Props {
-    orderId?: number
+    orderId: any
 }
 function OrderDetailsComponent(props: Props) {
 
