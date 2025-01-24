@@ -58,8 +58,20 @@ function HomeComponent() {
                         <h4 className="mb-3 text-secondary">100% Organic Foods</h4>
                         <h1 className="mb-5 display-3 text-primary">Organic Veggies & Fruits Foods</h1>
                         <div className="position-relative mx-auto">
-                            <input className="form-control border-2 border-secondary w-75 py-3 px-4 rounded-pill" type="text" placeholder="Search" />
-                            <button type="submit" className="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100" style={{ top: "0", right: "25%" }}>Tìm kiếm</button>
+                            <input id="search-keyword" className="form-control border-2 border-secondary w-75 py-3 px-4 rounded-pill"
+                                type="text" placeholder="Tìm kiếm" />
+                            <button type="submit"
+                                className="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100"
+                                style={{ top: "0", right: "25%" }}
+                                onClick={() => {
+                                    //@ts-ignore
+                                    const value = document.getElementById("search-keyword").value
+                                    const path = "/shop"
+                                    history.pushState({ "keyword": value }, "", path)
+                                    window.location.href = path
+                                }}
+                            >
+                                Tìm kiếm</button>
                         </div>
                     </div>
                     <div className="col-md-12 col-lg-5">

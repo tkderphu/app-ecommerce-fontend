@@ -20,8 +20,13 @@ export class AppProductSpuDetailsRespVO extends AppProductSpuSimpleRespVO{
     skus?: Array<Pair<number, AppProductSkuRespVO>>
     properties?: Array<Pair<PropertyRespVO, Array<PropertyValueRespVO>>>
     description?: string   
+    spuInfos?: Array<ProductSpuInfoRespVO>
 }
-
+export interface ProductSpuInfoRespVO {
+    propertyName?: string
+    value?: string
+    id?: number
+}
 export interface SellerDetailRespVO extends SellerRespVO{
     numComment?: number
     numProduct?: number

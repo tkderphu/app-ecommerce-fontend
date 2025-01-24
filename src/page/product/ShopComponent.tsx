@@ -30,7 +30,7 @@ function ShopComponent() {
     const [condition, setCondition] = useState<Map<string, string>>(new Map<string, string>())
     const [categoryIds, setCategoryIds] = useState<Array<number>>(new Array<number>())
     const [priceDataSearchVO, setPriceDataSearchVO] = useState<PriceDataSearchVO>()
-    
+    const [keyword, setKeyword] = useState()
     let pageSpuReq: PageProductSpuReqVO = {
         limit: 30,
         page: 1
@@ -38,11 +38,16 @@ function ShopComponent() {
 
 
     useEffect(() => {
-        if(history.state.sellerId) {
+        if (history.state.sellerId) {
             condition.set("seller", history.state.sellerId)
             //@ts-ignore
-            pageSpuReq.condition =mapToObject(condition)
-        } 
+            pageSpuReq.condition = mapToObject(condition)
+        }
+        if (history.state.keyword) {
+            condition.set("keyword", history.state.keyword)
+            //@ts-ignore
+            pageSpuReq.condition = mapToObject(condition)
+        }
         fetchProduct()
         fetchCategory()
         fetchBrand()
@@ -173,14 +178,29 @@ function ShopComponent() {
                                             name="query"
                                             id="searchProducts"
                                             aria-describedby="search-icon-1"
+                                            value={condition.get("keyword")}
                                             onChange={(e: any) => {
                                                 condition.set("keyword", e.target.value)
+                                                setCondition(new Map<string, string>(condition))
                                             }}
                                         />
                                         <button
                                             id="search-icon-1"
                                             onClick={() => {
-                                                console.log("Condition: ", condition)
+                                                const checkboxes = document.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
+                                                checkboxes.forEach(checkbox => {
+                                                    if (checkbox.checked) {
+                                                        categoryIds.push(Number.parseInt(checkbox.value))
+                                                    }
+                                                })
+                                                condition.set("category", JSON.stringify(categoryIds))
+                                                condition.set("price", JSON.stringify(priceDataSearchVO))
+
+                                                console.log(JSON.stringify(mapToObject(condition)))
+                                                //@ts-ignore
+                                                pageSpuReq.condition = mapToObject(condition)
+                                                console.log("req: ", pageSpuReq)
+                                                fetchProduct()
                                             }}
                                             className="input-group-text p-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style={{ cursor: "pointer" }} viewBox="0 0 16 16">
@@ -197,7 +217,7 @@ function ShopComponent() {
                                             className="border-0 form-select-sm bg-light me-3"
                                         >
                                             <option
-                                            
+
                                             >
                                                 Sản phẩm bán chạy
                                             </option>
@@ -207,9 +227,9 @@ function ShopComponent() {
                                             </option>
                                             <option
                                             >
-                                               Đánh giá từ cao đến thấp
+                                                Đánh giá từ cao đến thấp
                                             </option>
-                                            
+
                                         </select>
                                     </div>
                                 </div>
@@ -399,25 +419,7 @@ function ShopComponent() {
                                                         />
                                                         <label htmlFor="endPrice">Đến</label>
                                                     </div>
-                                                    <button
-                                                        onClick={() => {
-                                                            const checkboxes = document.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
-                                                            checkboxes.forEach(checkbox => {
-                                                                if (checkbox.checked) {
-                                                                    categoryIds.push(Number.parseInt(checkbox.value))
-                                                                }
-                                                            })
-                                                            condition.set("category", JSON.stringify(categoryIds))
-                                                            condition.set("price", JSON.stringify(priceDataSearchVO))
 
-                                                            console.log(JSON.stringify(mapToObject(condition)))
-                                                            //@ts-ignore
-                                                            pageSpuReq.condition = mapToObject(condition)
-                                                            console.log("req: ", pageSpuReq)
-                                                            fetchProduct()
-                                                        }}
-                                                        className="btn btn-primary">Tìm kiếm
-                                                    </button>
                                                 </div>
                                             </div>
                                         </div >

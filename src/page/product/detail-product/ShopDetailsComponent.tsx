@@ -19,6 +19,7 @@ function ShopDetailsComponent() {
     const [productDetail, setProductDetail] = useState<AppProductSpuDetailsRespVO>()
     const [sku, setSku] = useState<AppProductSkuRespVO | undefined>()
     const { id } = useParams();
+    const [userSelected, setUserSelected] = useState<boolean>(false)
     useEffect(() => {
 
         spuService.getDetailProductSpu(id).then(res => {
@@ -66,14 +67,6 @@ function ShopDetailsComponent() {
         })?.at(0)
     }
 
-    const checkWhetherPropertyIsMatch = () => {
-
-    }
-
-
-    const buy = () => {
-
-    }
 
     return (
         <div>
@@ -113,7 +106,7 @@ function ShopDetailsComponent() {
 
                                     <h4 className="fw-bold mb-3">{productDetail?.name}</h4>
                                     <p className="mb-3">Category: {productDetail?.category?.name}</p>
-                                    <h5 className="fw-bold mb-3">{productDetail?.minPrice?.toLocaleString() + " - " + productDetail?.maxPrice?.toLocaleString()}</h5>
+                                    <h5 className="fw-bold mb-3">{sku ? sku.price?.toLocaleString() : productDetail?.minPrice?.toLocaleString() + " - " + productDetail?.maxPrice?.toLocaleString()}</h5>
                                     {productDetail?.properties?.map(pair => {
                                         return (
                                             <div className="d-flex justify-content-between align-items-center">
@@ -141,7 +134,9 @@ function ShopDetailsComponent() {
                                                                             })
                                                                         })
                                                                         const res: Pair<number, AppProductSkuRespVO> | undefined = getSku(sumId)
-                                                                        console.log("sku: ", res)
+                                                                        if(res) {
+                                                                            setUserSelected(true)
+                                                                        }
                                                                         //@ts-ignore
                                                                         setSku(res?.value)
                                                                     }}
@@ -179,7 +174,7 @@ function ShopDetailsComponent() {
                                             +
                                         </button>
                                     </div>
-                                    {!sku && <div className="text-start mb-3"><b>Số lượng sản phẩm còn lại:</b> <span style={{ color: "red" }}>{0}</span></div>}
+                                    {userSelected && !sku && <div className="text-start mb-3"><b>Số lượng sản phẩm còn lại:</b> <span style={{ color: "red" }}>{0}</span></div>}
                                     {sku && <div className="text-start mb-3"><b>Số lượng sản phẩm còn lại:</b> <span style={{ color: "red" }}>{sku?.inStock}</span></div>}
                                     <div className="d-flex justify-content-around flex-wrap">
                                         <a href="javascript:(0)"
@@ -209,25 +204,30 @@ function ShopDetailsComponent() {
 
                                         <a href="javascript:(0)"
                                             onClick={() => {
-                                                if (sku) {
-                                                    const cartItemReq: CartCreateReqVO = {
-                                                        productSkuId: sku.id,
-                                                        quantity: countProduct
-                                                    }
-                                                    cartService.addItemIntoCart(cartItemReq).then(res => {
-                                                        if (res.data.code != 200) {
-                                                            alert(res.data.message)
-                                                        } else {
-                                                            window.history.pushState({ "skuId": cartItemReq.productSkuId }, "", "/cart")
-                                                            window.location.href = "/cart"
-                                                        }
-                                                    }).catch(err => {
-                                                        alert("Lỗi hệ thống")
-                                                        console.error(err)
-                                                    })
+                                                if(!userSelected) {
+                                                    alert("Vui lòng chọn sản phẩm")
                                                 } else {
-                                                    alert("Sản phẩm đã hết")
+                                                    if (sku) {
+                                                        const cartItemReq: CartCreateReqVO = {
+                                                            productSkuId: sku.id,
+                                                            quantity: countProduct
+                                                        }
+                                                        cartService.addItemIntoCart(cartItemReq).then(res => {
+                                                            if (res.data.code != 200) {
+                                                                alert(res.data.message)
+                                                            } else {
+                                                                window.history.pushState({ "skuId": cartItemReq.productSkuId }, "", "/cart")
+                                                                window.location.href = "/cart"
+                                                            }
+                                                        }).catch(err => {
+                                                            alert("Lỗi hệ thống")
+                                                            console.error(err)
+                                                        })
+                                                    } else {
+                                                        alert("Sản phẩm đã hết")
+                                                    }
                                                 }
+                                                
 
                                             }}
                                             className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
@@ -245,22 +245,22 @@ function ShopDetailsComponent() {
                                             aria-controls="nav-about" aria-selected="true">Người bán hàng</button>
                                     </div>
                                     <div className="tab-content">
-                                        <div className="d-flex align-items-center">
+                                        <div className="d-flex align-items-center flex-wrap">
                                             <div className="col-5 d-flex align-items-center">
                                                 <img src={productDetail?.seller?.shopImage} className="border rounded-circle" style={{ marginRight: "20px" }} width={"100px"} />
                                                 <div className="d-flex flex-column">
                                                     <div className="mb-3"><span style={{ color: "black", fontSize: "22px" }}>{productDetail?.seller?.shopName}</span></div>
                                                     <div className="d-flex w-100">
                                                         <a href="javascript:(0)" className="border" style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px" }}>Nhắn tin</a>
-                                                        <a href="javascript:(0)"    
-                                                        onClick={() => {
-                                                            const path = "/shop?seller=" + productDetail?.seller?.shopName
-                                                            history.pushState({"sellerId": productDetail?.seller?.id}, "", path)
-                                                            window.location.href = path
-                                                        }}
-                                                        className="border" 
-                                                        style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px", marginLeft: "20px" }}
-                                                        
+                                                        <a href="javascript:(0)"
+                                                            onClick={() => {
+                                                                const path = "/shop?seller=" + productDetail?.seller?.shopName
+                                                                history.pushState({ "sellerId": productDetail?.seller?.id }, "", path)
+                                                                window.location.href = path
+                                                            }}
+                                                            className="border"
+                                                            style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px", marginLeft: "20px" }}
+
                                                         >Xem cửa hàng</a>
                                                     </div>
                                                 </div>
@@ -301,19 +301,18 @@ function ShopDetailsComponent() {
                                     <div className="nav nav-tabs mb-3">
                                         <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
                                             id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                            aria-controls="nav-about" aria-selected="true">Mô tả</button>
+                                            aria-controls="nav-about" aria-selected="true">Chi tiết sản phẩm</button>
                                     </div>
 
                                 </nav>
-                                <div className="tab-content mb-5">
+                                <div className="tab-content">
                                     <div className="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                                        <p>{productDetail?.description}</p>
                                         <div className="px-2">
                                             <div className="row g-4">
                                                 <div className="col-6">
                                                     <div className="row bg-light align-items-center text-center justify-content-center py-2">
                                                         <div className="col-6">
-                                                            <p className="mb-0">Brand</p>
+                                                            <p className="mb-0">Nhãn hàng</p>
                                                         </div>
                                                         <div className="col-6">
                                                             <p className="mb-0">{productDetail?.brand?.name}</p>
@@ -321,7 +320,7 @@ function ShopDetailsComponent() {
                                                     </div>
                                                     <div className="row text-center align-items-center justify-content-center py-2">
                                                         <div className="col-6">
-                                                            <p className="mb-0">Send from</p>
+                                                            <p className="mb-0">Gửi từ</p>
                                                         </div>
                                                         <div className="col-6">
                                                             <p className="mb-0">{productDetail?.sendFrom}</p>
@@ -329,30 +328,53 @@ function ShopDetailsComponent() {
                                                     </div>
                                                     <div className="row bg-light text-center align-items-center justify-content-center py-2">
                                                         <div className="col-6">
-                                                            <p className="mb-0">Quantity</p>
+                                                            <p className="mb-0">Số lượng hiện có</p>
                                                         </div>
                                                         <div className="col-6">
                                                             <p className="mb-0">5555</p>
                                                         </div>
                                                     </div>
-                                                    <div className="row text-center align-items-center justify-content-center py-2">
-                                                        <div className="col-6">
-                                                            <p className="mb-0">Material</p>
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <p className="mb-0">Chat lieu vai cotton</p>
-                                                        </div>
-                                                    </div>
+                                                    {productDetail?.spuInfos?.map((res, index) => {
+                                                        if (index % 2 == 0) {
+                                                            return <div className="row text-center align-items-center justify-content-center py-2">
+                                                                <div className="col-6">
+                                                                    <p className="mb-0">{res.propertyName}</p>
+                                                                </div>
+                                                                <div className="col-6">
+                                                                    <p className="mb-0">{res.value}</p>
+                                                                </div>
+                                                            </div>
+                                                        } else {
+                                                            return <div className="row bg-light text-center align-items-center justify-content-center py-2">
+                                                                <div className="col-6">
+                                                                    <p className="mb-0">{res.propertyName}</p>
+                                                                </div>
+                                                                <div className="col-6">
+                                                                    <p className="mb-0">{res.value}</p>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    })}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="tab-pane" id="nav-vision" role="tabpanel">
-                                        <p className="text-dark">Tempor erat elitr rebum at clita. Diam dolor diam ipsum et tempor sit. Aliqu diam
-                                            amet diam et eos labore. 3</p>
-                                        <p className="mb-0">Diam dolor diam ipsum et tempor sit. Aliqu diam amet diam et eos labore.
-                                            Clita erat ipsum et lorem et sit</p>
+                                </div>
+                            </div>
+                            <div className="col-lg-12">
+                                <nav>
+                                    <div className="nav nav-tabs mb-3">
+                                        <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                            id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                            aria-controls="nav-about" aria-selected="true">Mô tả</button>
                                     </div>
+
+                                </nav>
+                                <div className="tab-content mb-5">
+                                    <div className="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                                        <p>{productDetail?.description}</p>
+                                    </div>
+
                                 </div>
                             </div>
                             <div className="col-lg-12" id="comment-product">

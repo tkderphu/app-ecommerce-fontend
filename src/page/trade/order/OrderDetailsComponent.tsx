@@ -63,9 +63,9 @@ function OrderDetailsComponent(props: Props) {
                         </thead>
                         <tbody>
                             {lineItem.items?.map(item => {
-                                return <tr>
+                                return <tr >
                                     <th scope="row">{item.id}</th>
-                                    <td>{item.product?.name}</td>
+                                    <td><a href={"/product/" + item.product.id}>{item.product?.name}</a></td>
                                     <td>{item.product?.properties}</td>
                                     <td>{item.product?.price?.toLocaleString()}</td>
                                     <td>{item.quantity}</td>
