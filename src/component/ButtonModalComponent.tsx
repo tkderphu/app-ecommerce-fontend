@@ -5,12 +5,13 @@ interface Props {
     body: any
     id: any
     nameButton: string
+    className?: string
 
 }
 function ButtonModalComponent(props: Props) {
     return (
         <div>
-            <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#" + props.id}>
+            <button type="button" className={props.className ? props.className : "btn btn-primary"} data-toggle="modal" data-target={"#" + props.id}>
                 {props.nameButton}
             </button>
 

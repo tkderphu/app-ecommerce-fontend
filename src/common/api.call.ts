@@ -1,12 +1,13 @@
 
 import axios, { Method, AxiosRequestConfig } from 'axios';
 import { getToken } from './common';
-const headers: Record<string, string> = {
+export const headers: Record<string, string> = {
     'Content-Type': "application/json; charset=utf-8",
     'Authorization': `UUID ${getToken()?.accessToken}`,
 }
-const BASE = 'http://localhost:8081/app-api'
-const BASE_ADMIN = 'http://localhost:8081/admin-api'
+export const BASE_URL = "http://localhost:8081"
+const BASE_APP = `${BASE_URL}/app-api`
+const BASE_ADMIN = `${BASE_URL}/admin-api`
 export class Request {
     public static call(path: string, method: Method, object?: any) {
         let data: any = object;
@@ -16,7 +17,7 @@ export class Request {
         let config: AxiosRequestConfig = {
             method: method,
             maxBodyLength: Infinity,
-            url: `${BASE}${path}`,
+            url: `${BASE_APP}${path}`,
             data: data,
             headers: headers
         };

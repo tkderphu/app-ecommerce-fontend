@@ -251,7 +251,10 @@ function ShopDetailsComponent() {
                                                 <div className="d-flex flex-column">
                                                     <div className="mb-3"><span style={{ color: "black", fontSize: "22px" }}>{productDetail?.seller?.shopName}</span></div>
                                                     <div className="d-flex w-100">
-                                                        <a href="javascript:(0)" className="border" style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px" }}>Nhắn tin</a>
+                                                        <a href="javascript:(0)"
+                                                         className="border" 
+                                                         
+                                                        style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px" }}>Nhắn tin</a>
                                                         <a href="javascript:(0)"
                                                             onClick={() => {
                                                                 const path = "/shop?seller=" + productDetail?.seller?.shopName

@@ -1,15 +1,31 @@
-import { useState } from "react"
-import ChatSupportComponent from "../page/realtime/ChatSupportComponent"
+import { useEffect, useState } from "react"
+import ButtonModalComponent from "../component/ButtonModalComponent"
+import ModalComponent from "../component/ModalComponent"
+import ChatComponent from "../page/realtime/chat/ChatComponent"
+import messageService from "../page/realtime/service/message.service"
 
-function FooterComponent() {
+interface Props {
+    enableChat: boolean
+}
+function FooterComponent(props: any) {
 
-    const [enableChat, setEnableChat] = useState(false)
+    const [enableChat, setEnableChat] = useState(props.enableChat ? true : false)
+    const [countUnreadMessage, setCountUnreadMessage] = useState(0)
+    useEffect(() => {
+        messageService.getTotalUnreadMessageFromUser().then(res => {
+            if(res.data.code === 200) {
+                setCountUnreadMessage(res.data.data)
+            }
+        }).catch(err => {
+            console.error("[get total unread message]: ",  err)
+        })
+    }, [])
 
     return (
         <div>
             <div className="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
                 <div className="container py-5">
-                    <div className="pb-4 mb-4" style={{borderBottom: "1px solid rgba(226, 175, 24, 0.5)"}}>
+                    <div className="pb-4 mb-4" style={{ borderBottom: "1px solid rgba(226, 175, 24, 0.5)" }}>
                         <div className="row g-4">
                             <div className="col-lg-3">
                                 <a href="#">
@@ -19,8 +35,8 @@ function FooterComponent() {
                             </div>
                             <div className="col-lg-6">
                                 <div className="position-relative mx-auto">
-                                    <input className="form-control border-0 w-100 py-3 px-4 rounded-pill" type="number" placeholder="Your Email"/>
-                                        <button type="submit" className="btn btn-primary border-0 border-secondary py-3 px-4 position-absolute rounded-pill text-white" style={{top:0, right:0}}>Subscribe Now</button>
+                                    <input className="form-control border-0 w-100 py-3 px-4 rounded-pill" type="number" placeholder="Your Email" />
+                                    <button type="submit" className="btn btn-primary border-0 border-secondary py-3 px-4 position-absolute rounded-pill text-white" style={{ top: 0, right: 0 }}>Subscribe Now</button>
                                 </div>
                             </div>
                             <div className="col-lg-3">
@@ -71,19 +87,41 @@ function FooterComponent() {
                                 <p>Email: Example@gmail.com</p>
                                 <p>Phone: +0123 4567 8910</p>
                                 <p>Payment Accepted</p>
-                                <img src="img/payment.png" className="img-fluid" alt=""/>
+                                <img src="img/payment.png" className="img-fluid" alt="" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <a id="show-chat" style={{color:"white"}} className="btn btn-primary border-3 border-primary show-chat-support" 
+            <a href="#" data-toggle="modal" data-target={"#chat-user"}
                 onClick={() => {
-                    setEnableChat(!enableChat)
+                    if (!enableChat) {
+                        setEnableChat(!enableChat)
+                    }
                 }}
-            >Chat</a>
-            <ChatSupportComponent enableChat = {enableChat}/>
+                className="btn btn-primary border-3 border-primary show-chat-support">
+                Chat
+                <span className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
+                    style={{ top: "-5px", right: "0px", height: "20px", minWidth: "20px" }}>
+                   {countUnreadMessage}
+                </span>
+            </a>
+            <ModalComponent
+                id={"chat-user"}
+                body={
+                    <ChatComponent enableChat={enableChat}/>
+                }
+                title={"Thông báo"}
+
+            />
+            {/* <ButtonModalComponent
+                
+                className="btn btn-primary border-3 border-primary show-chat-support"
+                 body={<ChatComponent/>}
+                 id={"test1"}
+                 nameButton="Chat"
+                 title="Nhắn tin"
+            /> */}
         </div>
     )
 }
