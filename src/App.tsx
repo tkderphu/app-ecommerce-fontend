@@ -9,8 +9,6 @@ import RegisterPageComponent from './page/authen/RegisterComponent'
 import HomeComponent from './page/product/HomeComponent'
 import ShopComponent from './page/product/ShopComponent'
 import ShopDetailsComponent from './page/product/detail-product/ShopDetailsComponent'
-import ChatSupportComponent from './page/realtime/ChatSupportComponent'
-import LiveStreamPageComponent from './page/realtime/LivestreamComponent'
 import CartPageComponent from './page/trade/cart/CartComponent'
 import CheckoutPageComponent from './page/trade/order/CheckoutPageComponent'
 import OrderDetailsComponent from './page/trade/order/OrderDetailsComponent'
@@ -20,6 +18,8 @@ import UserProfileComponent from './page/user/UserProfileComponent'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WalletComponent from './page/finance/WalletComponent'
 import OrderDetailsPageComponent from './page/trade/order/OrderDetailsPageComponent'
+import LivestreamDetailComponent from './page/realtime/stream/LivestreamDetailComponent'
+import LiveStreamPageComponent from './page/realtime/LivestreamComponent'
 function App() {
 
 
@@ -40,6 +40,7 @@ function App() {
           <Route path='my-orders/:orderId' element={<OrderDetailsPageComponent/>}/>
           <Route path='livestream' element={<LiveStreamPageComponent/>}/>
           <Route path='my-wallet' element={<WalletComponent/>}/>
+          <Route path='livestream/:liveId' element={<LivestreamDetailComponent/>}/>
         
       </Routes>
     </BrowserRouter>
