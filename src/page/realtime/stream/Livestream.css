@@ -6,7 +6,7 @@
 .comments-section {
     border-left: 1px solid #ddd;
     padding-left: 20px;
-    height: 400px; /* Fixed height for the comments section */
+    height: 700px; /* Fixed height for the comments section */
     overflow-y: auto; /* Allow scrolling */
     display: flex;
     flex-direction: column-reverse;
@@ -21,9 +21,7 @@
 .input-group {
     margin-top: 10px;
 }
-#comments-section {
-    height: 500px;
-}
+
 .fullscreen-button {
     margin-top: 10px;
 }

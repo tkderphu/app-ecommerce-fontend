@@ -15,3 +15,22 @@ export interface WalletRespVO {
     amount?: number
     walletType?: "USER_MEMBER" | "SYSTEM"
 }
+
+/**
+ * private String avatar;
+    private String fullName;
+    private String aliasName;
+    private String email;
+    private String phoneNumber;
+    private UserMember.Sex sex;
+ */
+export interface UserMemberResVO {
+    avatar?: string
+    userId?: number
+    aliasName?: string
+    fullName?: string
+    email?: string
+    phoneNUmber?: string
+    sex?: 'MALE' | 'FEMALE',
+    isSeller?: boolean
+}

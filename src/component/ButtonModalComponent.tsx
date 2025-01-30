@@ -1,11 +1,11 @@
 import ModalComponent from "./ModalComponent"
 
 interface Props {
-    title: string
+    title: any
     body: any
     id: any
-    nameButton: string
-    className?: string
+    nameButton?: any
+    className?: any
 
 }
 function ButtonModalComponent(props: Props) {

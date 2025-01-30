@@ -1,6 +1,6 @@
 import { count } from "console"
 import { type } from "os"
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { Pair } from "../../../common/common"
 import ModalComponent from "../../../component/ModalComponent"
@@ -14,15 +14,19 @@ import { AppProductSkuRespVO, AppProductSpuDetailsRespVO } from "../record/recor
 import spuService from "../service/spu.service"
 import "./ShopDetails.css"
 
-function ShopDetailsComponent() {
+export interface Props {
+    productId: any,
+    orderPlace?: "NORMAL" | "LIVESTREAM"
+}
+
+function ShopDetailsComponent(props: Props) {
     const [countProduct, setCountProduct] = useState<number>(1)
     const [productDetail, setProductDetail] = useState<AppProductSpuDetailsRespVO>()
     const [sku, setSku] = useState<AppProductSkuRespVO | undefined>()
     const { id } = useParams();
     const [userSelected, setUserSelected] = useState<boolean>(false)
     useEffect(() => {
-
-        spuService.getDetailProductSpu(id).then(res => {
+        spuService.getDetailProductSpu((id ? id : props.productId)).then(res => {
             if (res.data.code === 200) {
 
                 setProductDetail(res.data.data)
@@ -39,7 +43,7 @@ function ShopDetailsComponent() {
         let sumId: number = 0
 
         productDetail?.properties?.map(pair => {
-            const name: string = "sku-property-" + pair.key?.id
+            const name: string = `${props.productId}` + "-sku-property-" + pair.key?.id
             document.getElementsByName(name).forEach(element => {
                 //@ts-ignore
                 //@ts-ignore
@@ -70,7 +74,7 @@ function ShopDetailsComponent() {
 
     return (
         <div>
-            <HeaderComponent />
+            {!props.productId && <HeaderComponent />}
             <div className="container-fluid">
                 <div className="container py-4">
                     <div className="row g-4 mb-5">
@@ -117,11 +121,11 @@ function ShopDetailsComponent() {
                                                             <div className="custom-control custom-radio mb-3"
 
                                                                 style={{ marginLeft: "20px" }}>
-                                                                <input type="radio" id={"customRadio3" + value.id}
+                                                                <input type="radio" id={ `${props.productId}` +"customRadio3" + value.id}
                                                                     onClick={() => {
                                                                         let sumId: number = 0
                                                                         productDetail?.properties?.map(pair => {
-                                                                            const name: string = "sku-property-" + pair.key?.id
+                                                                            const name: string = `${props.productId}` + "-sku-property-" + pair.key?.id
                                                                             document.getElementsByName(name).forEach(element => {
                                                                                 //@ts-ignore
                                                                                 //@ts-ignore
@@ -134,15 +138,15 @@ function ShopDetailsComponent() {
                                                                             })
                                                                         })
                                                                         const res: Pair<number, AppProductSkuRespVO> | undefined = getSku(sumId)
-                                                                        if(res) {
+                                                                        if (res) {
                                                                             setUserSelected(true)
                                                                         }
                                                                         //@ts-ignore
                                                                         setSku(res?.value)
                                                                     }}
                                                                     value={value.id}
-                                                                    name={"sku-property-" + pair.key?.id} className="custom-control-input" />
-                                                                <label className="custom-control-label" htmlFor={"customRadio3" + value.id}>
+                                                                    name={ `${props.productId}` + "-sku-property-" + pair.key?.id} className="custom-control-input" />
+                                                                <label className="custom-control-label" htmlFor={ `${props.productId}` + "customRadio3" + value.id}>
                                                                     <img src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg" alt="Thumbnail" className="thumbnail" />
                                                                     {value.value}
                                                                 </label>
@@ -204,7 +208,7 @@ function ShopDetailsComponent() {
 
                                         <a href="javascript:(0)"
                                             onClick={() => {
-                                                if(!userSelected) {
+                                                if (!userSelected) {
                                                     alert("Vui lòng chọn sản phẩm")
                                                 } else {
                                                     if (sku) {
@@ -217,7 +221,7 @@ function ShopDetailsComponent() {
                                                                 alert(res.data.message)
                                                             } else {
                                                                 window.history.pushState({ "skuId": cartItemReq.productSkuId }, "", "/cart")
-                                                                window.location.href = "/cart"
+                                                                window.open("/cart", '', "_blank")
                                                             }
                                                         }).catch(err => {
                                                             alert("Lỗi hệ thống")
@@ -227,7 +231,7 @@ function ShopDetailsComponent() {
                                                         alert("Sản phẩm đã hết")
                                                     }
                                                 }
-                                                
+
 
                                             }}
                                             className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
@@ -237,209 +241,217 @@ function ShopDetailsComponent() {
                                     </div>
                                 </div>
                             </div>
-                            <div>
-                                <nav>
-                                    <div className="nav nav-tabs mb-3">
-                                        <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
-                                            id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                            aria-controls="nav-about" aria-selected="true">Người bán hàng</button>
-                                    </div>
-                                    <div className="tab-content">
-                                        <div className="d-flex align-items-center flex-wrap">
-                                            <div className="col-5 d-flex align-items-center">
-                                                <img src={productDetail?.seller?.shopImage} className="border rounded-circle" style={{ marginRight: "20px" }} width={"100px"} />
-                                                <div className="d-flex flex-column">
-                                                    <div className="mb-3"><span style={{ color: "black", fontSize: "22px" }}>{productDetail?.seller?.shopName}</span></div>
-                                                    <div className="d-flex w-100">
-                                                        <a href="javascript:(0)"
-                                                         className="border" 
-                                                         
-                                                        style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px" }}>Nhắn tin</a>
-                                                        <a href="javascript:(0)"
-                                                            onClick={() => {
-                                                                const path = "/shop?seller=" + productDetail?.seller?.shopName
-                                                                history.pushState({ "sellerId": productDetail?.seller?.id }, "", path)
-                                                                window.location.href = path
-                                                            }}
-                                                            className="border"
-                                                            style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px", marginLeft: "20px" }}
+                            {!props.productId && (
+                                <Fragment>
+                                    <div>
+                                        <nav>
+                                            <div className="nav nav-tabs mb-3">
+                                                <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                                    id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                                    aria-controls="nav-about" aria-selected="true">Người bán hàng</button>
+                                            </div>
+                                            <div className="tab-content">
+                                                <div className="d-flex align-items-center flex-wrap">
+                                                    <div className="col-5 d-flex align-items-center">
+                                                        <img src={productDetail?.seller?.shopImage} className="border rounded-circle" style={{ marginRight: "20px" }} width={"100px"} />
+                                                        <div className="d-flex flex-column">
+                                                            <div className="mb-3"><span style={{ color: "black", fontSize: "22px" }}>{productDetail?.seller?.shopName}</span></div>
+                                                            <div className="d-flex w-100">
+                                                                <a href="javascript:(0)"
+                                                                    className="border"
 
-                                                        >Xem cửa hàng</a>
+                                                                    style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px" }}>Nhắn tin</a>
+                                                                <a href="javascript:(0)"
+                                                                    onClick={() => {
+                                                                        const path = "/shop?seller=" + productDetail?.seller?.shopName
+                                                                        history.pushState({ "sellerId": productDetail?.seller?.id }, "", path)
+                                                                        window.location.href = path
+                                                                    }}
+                                                                    className="border"
+                                                                    style={{ fontSize: "20px", paddingRight: "25px", paddingLeft: "25px", marginLeft: "20px" }}
+
+                                                                >Xem cửa hàng</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="d-flex flex-wrap align-items-center mt-3">
+                                                        <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                            <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Đánh giá</div>
+                                                            <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numComment}</div>
+                                                        </div>
+                                                        <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                            <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Sản phẩm</div>
+                                                            <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numProduct}</div>
+                                                        </div>
+                                                        <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                            <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tham gia</div>
+                                                            <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.joined}</div>
+                                                        </div>
+                                                        <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                            <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Người theo dõi</div>
+                                                            <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numFollow}</div>
+                                                        </div>
+                                                        <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                            <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tỷ lệ phản hồi</div>
+                                                            <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.replyPercent}%</div>
+                                                        </div>
+                                                        <div className="d-flex mb-3 col-4 justify-content-between" >
+                                                            <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tỷ lệ hủy đơn</div>
+                                                            <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.replyPercent}%</div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="d-flex flex-wrap align-items-center mt-3">
-                                                <div className="d-flex mb-3 col-4 justify-content-between" >
-                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Đánh giá</div>
-                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numComment}</div>
-                                                </div>
-                                                <div className="d-flex mb-3 col-4 justify-content-between" >
-                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Sản phẩm</div>
-                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numProduct}</div>
-                                                </div>
-                                                <div className="d-flex mb-3 col-4 justify-content-between" >
-                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tham gia</div>
-                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.joined}</div>
-                                                </div>
-                                                <div className="d-flex mb-3 col-4 justify-content-between" >
-                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Người theo dõi</div>
-                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.numFollow}</div>
-                                                </div>
-                                                <div className="d-flex mb-3 col-4 justify-content-between" >
-                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tỷ lệ phản hồi</div>
-                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.replyPercent}%</div>
-                                                </div>
-                                                <div className="d-flex mb-3 col-4 justify-content-between" >
-                                                    <div style={{ paddingRight: "", marginRight: "50px", fontSize: "18px" }}>Tỷ lệ hủy đơn</div>
-                                                    <div style={{ paddingRight: "30px", fontSize: "17px", color: "red" }}>{productDetail?.seller?.replyPercent}%</div>
-                                                </div>
+                                        </nav>
+
+                                    </div>
+                                    <div className="col-lg-12">
+                                        <nav>
+                                            <div className="nav nav-tabs mb-3">
+                                                <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                                    id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                                    aria-controls="nav-about" aria-selected="true">Chi tiết sản phẩm</button>
                                             </div>
-                                        </div>
-                                    </div>
-                                </nav>
 
-                            </div>
-                            <div className="col-lg-12">
-                                <nav>
-                                    <div className="nav nav-tabs mb-3">
-                                        <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
-                                            id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                            aria-controls="nav-about" aria-selected="true">Chi tiết sản phẩm</button>
-                                    </div>
-
-                                </nav>
-                                <div className="tab-content">
-                                    <div className="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                                        <div className="px-2">
-                                            <div className="row g-4">
-                                                <div className="col-6">
-                                                    <div className="row bg-light align-items-center text-center justify-content-center py-2">
+                                        </nav>
+                                        <div className="tab-content">
+                                            <div className="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                                                <div className="px-2">
+                                                    <div className="row g-4">
                                                         <div className="col-6">
-                                                            <p className="mb-0">Nhãn hàng</p>
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <p className="mb-0">{productDetail?.brand?.name}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row text-center align-items-center justify-content-center py-2">
-                                                        <div className="col-6">
-                                                            <p className="mb-0">Gửi từ</p>
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <p className="mb-0">{productDetail?.sendFrom}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row bg-light text-center align-items-center justify-content-center py-2">
-                                                        <div className="col-6">
-                                                            <p className="mb-0">Số lượng hiện có</p>
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <p className="mb-0">5555</p>
-                                                        </div>
-                                                    </div>
-                                                    {productDetail?.spuInfos?.map((res, index) => {
-                                                        if (index % 2 == 0) {
-                                                            return <div className="row text-center align-items-center justify-content-center py-2">
+                                                            <div className="row bg-light align-items-center text-center justify-content-center py-2">
                                                                 <div className="col-6">
-                                                                    <p className="mb-0">{res.propertyName}</p>
+                                                                    <p className="mb-0">Nhãn hàng</p>
                                                                 </div>
                                                                 <div className="col-6">
-                                                                    <p className="mb-0">{res.value}</p>
+                                                                    <p className="mb-0">{productDetail?.brand?.name}</p>
                                                                 </div>
                                                             </div>
-                                                        } else {
-                                                            return <div className="row bg-light text-center align-items-center justify-content-center py-2">
+                                                            <div className="row text-center align-items-center justify-content-center py-2">
                                                                 <div className="col-6">
-                                                                    <p className="mb-0">{res.propertyName}</p>
+                                                                    <p className="mb-0">Gửi từ</p>
                                                                 </div>
                                                                 <div className="col-6">
-                                                                    <p className="mb-0">{res.value}</p>
+                                                                    <p className="mb-0">{productDetail?.sendFrom}</p>
                                                                 </div>
                                                             </div>
-                                                        }
-                                                    })}
+                                                            <div className="row bg-light text-center align-items-center justify-content-center py-2">
+                                                                <div className="col-6">
+                                                                    <p className="mb-0">Số lượng hiện có</p>
+                                                                </div>
+                                                                <div className="col-6">
+                                                                    <p className="mb-0">5555</p>
+                                                                </div>
+                                                            </div>
+                                                            {productDetail?.spuInfos?.map((res, index) => {
+                                                                if (index % 2 == 0) {
+                                                                    return <div className="row text-center align-items-center justify-content-center py-2">
+                                                                        <div className="col-6">
+                                                                            <p className="mb-0">{res.propertyName}</p>
+                                                                        </div>
+                                                                        <div className="col-6">
+                                                                            <p className="mb-0">{res.value}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                } else {
+                                                                    return <div className="row bg-light text-center align-items-center justify-content-center py-2">
+                                                                        <div className="col-6">
+                                                                            <p className="mb-0">{res.propertyName}</p>
+                                                                        </div>
+                                                                        <div className="col-6">
+                                                                            <p className="mb-0">{res.value}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                            })}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-12">
-                                <nav>
-                                    <div className="nav nav-tabs mb-3">
-                                        <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
-                                            id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                            aria-controls="nav-about" aria-selected="true">Mô tả</button>
-                                    </div>
+                                    <div className="col-lg-12">
+                                        <nav>
+                                            <div className="nav nav-tabs mb-3">
+                                                <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                                    id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                                    aria-controls="nav-about" aria-selected="true">Mô tả</button>
+                                            </div>
 
-                                </nav>
-                                <div className="tab-content mb-5">
-                                    <div className="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                                        <p>{productDetail?.description}</p>
-                                    </div>
+                                        </nav>
+                                        <div className="tab-content mb-5">
+                                            <div className="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                                                <p>{productDetail?.description}</p>
+                                            </div>
 
-                                </div>
-                            </div>
-                            <div className="col-lg-12" id="comment-product">
-                                <nav>
-                                    <div className="nav nav-tabs mb-3">
-                                        <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
-                                            id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                            aria-controls="nav-about" aria-selected="true">Bình luận</button>
+                                        </div>
                                     </div>
-                                </nav>
-                                <div className="d-flex">
-                                    <img src="img/avatar.jpg" className="img-fluid rounded-circle p-3" style={{ width: "100px", height: "100px" }} alt="" />
-                                    <div className="">
-                                        <p className="mb-2" style={{ fontSize: "14px" }}>April 12, 2024</p>
-                                        <div className="d-flex justify-content-between">
-                                            <h5>Jason Smith</h5>
-                                            <div className="d-flex mb-3">
-                                                <i className="fa fa-star text-secondary"></i>
-                                                <i className="fa fa-star text-secondary"></i>
-                                                <i className="fa fa-star text-secondary"></i>
-                                                <i className="fa fa-star text-secondary"></i>
-                                                <i className="fa fa-star"></i>
+                                    <div className="col-lg-12" id="comment-product">
+                                        <nav>
+                                            <div className="nav nav-tabs mb-3">
+                                                <button className="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                                    id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                                    aria-controls="nav-about" aria-selected="true">Bình luận</button>
+                                            </div>
+                                        </nav>
+                                        <div className="d-flex">
+                                            <img src="img/avatar.jpg" className="img-fluid rounded-circle p-3" style={{ width: "100px", height: "100px" }} alt="" />
+                                            <div className="">
+                                                <p className="mb-2" style={{ fontSize: "14px" }}>April 12, 2024</p>
+                                                <div className="d-flex justify-content-between">
+                                                    <h5>Jason Smith</h5>
+                                                    <div className="d-flex mb-3">
+                                                        <i className="fa fa-star text-secondary"></i>
+                                                        <i className="fa fa-star text-secondary"></i>
+                                                        <i className="fa fa-star text-secondary"></i>
+                                                        <i className="fa fa-star text-secondary"></i>
+                                                        <i className="fa fa-star"></i>
+                                                    </div>
+                                                </div>
+                                                <p>The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic
+                                                    words etc. Susp endisse ultricies nisi vel quam suscipit </p>
                                             </div>
                                         </div>
-                                        <p>The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic
-                                            words etc. Susp endisse ultricies nisi vel quam suscipit </p>
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="d-flex">
-                                    <img src="img/avatar.jpg" className="img-fluid rounded-circle p-3" style={{ width: "100px", height: "100px" }} alt="" />
-                                    <div className="">
-                                        <p className="mb-2" style={{ fontSize: "14px" }}>April 12, 2024</p>
-                                        <div className="d-flex justify-content-between">
-                                            <h5>Sam Peters</h5>
-                                            <div className="d-flex mb-3">
-                                                <i className="fa fa-star text-secondary"></i>
-                                                <i className="fa fa-star text-secondary"></i>
-                                                <i className="fa fa-star text-secondary"></i>
-                                                <i className="fa fa-star"></i>
-                                                <i className="fa fa-star"></i>
+                                        <hr />
+                                        <div className="d-flex">
+                                            <img src="img/avatar.jpg" className="img-fluid rounded-circle p-3" style={{ width: "100px", height: "100px" }} alt="" />
+                                            <div className="">
+                                                <p className="mb-2" style={{ fontSize: "14px" }}>April 12, 2024</p>
+                                                <div className="d-flex justify-content-between">
+                                                    <h5>Sam Peters</h5>
+                                                    <div className="d-flex mb-3">
+                                                        <i className="fa fa-star text-secondary"></i>
+                                                        <i className="fa fa-star text-secondary"></i>
+                                                        <i className="fa fa-star text-secondary"></i>
+                                                        <i className="fa fa-star"></i>
+                                                        <i className="fa fa-star"></i>
+                                                    </div>
+                                                </div>
+                                                <p className="text-dark">The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic
+                                                    words etc. Susp endisse ultricies nisi vel quam suscipit </p>
                                             </div>
                                         </div>
-                                        <p className="text-dark">The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic
-                                            words etc. Susp endisse ultricies nisi vel quam suscipit </p>
                                     </div>
-                                </div>
-                            </div>
+                                </Fragment>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
+           {!props.productId && (
+            <Fragment>
             <h1 className="fw-bold mb-0 mb-5">Related products</h1>
-            <div className="row g-4 justify-content-center">
-                <ProuctCardComponent />
-                <ProuctCardComponent />
-                <ProuctCardComponent />
-                <ProuctCardComponent />
-                <ProuctCardComponent />
-                <ProuctCardComponent />
-            </div>
-            <FooterComponent />
+             <div className="row g-4 justify-content-center">
+                 <ProuctCardComponent />
+                 <ProuctCardComponent />
+                 <ProuctCardComponent />
+                 <ProuctCardComponent />
+                 <ProuctCardComponent />
+                 <ProuctCardComponent />
+             </div>
+             <FooterComponent />
+            </Fragment>
+           )}
         </div>
     )
 }

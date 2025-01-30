@@ -1,3 +1,6 @@
+import { AppProductSpuSimpleRespVO } from "../../product/record/record.response"
+import { UserMemberResVO } from "../../user/record/record.res.vo"
+
 export interface ConversationRespVO {
     message?: any
     numberUnreadMessage?: number
@@ -28,14 +31,28 @@ export interface ChatUserRespVO {
     numberUnreadMessage?: number
 }
 
+export interface LiveCommentRespVO  {
+    user?: UserMemberResVO
+    content?: string
+    like?: number
+    isPinned?: boolean
+    isDeleted?: boolean
+    createdDate?: string
 
-/**
- * 
- * private Long id;
-    private String userFullName;
-    private Long userId;
-    private String userAvatar;
-    private Boolean online;
-//    private MessageSimpleRespVO message;
-    private Integer numberUnreadMessage;
- */
+}
+export interface LivestreamRespVO  {
+    id?: number
+    titleLiveStream?: string
+    hostOwner?: UserMemberResVO
+    totalView?: number
+    startDate?: string
+    started?: boolean
+}
+export interface LiveProductResVO  {
+    productSpu?: AppProductSpuSimpleRespVO
+    display?: boolean
+    pin?: boolean
+}
+export interface LivestreamDetailRespVO extends LivestreamRespVO {
+    liveProducts?: Array<LiveProductResVO>
+}

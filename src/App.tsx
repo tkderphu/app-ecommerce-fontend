@@ -24,12 +24,13 @@ function App() {
 
 
   return (
+
     <BrowserRouter>
       <Routes>
           <Route index element={<HomeComponent />} />
 
           <Route path="shop" element={<ShopComponent />} />
-          <Route path='product/:id' element={<ShopDetailsComponent/>}></Route>
+          <Route path='product/:id' element={<ShopDetailsComponent productId={undefined}/>}></Route>
           <Route path='login' element={<LoginPageComponent></LoginPageComponent>}></Route>
           <Route path='register' element={<RegisterPageComponent/>}></Route>
           <Route path='forget-password' element={<ForgetPageComponent/>}></Route>
