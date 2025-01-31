@@ -7,13 +7,20 @@ export interface MessageCreateReqVO {
 }
 
 
-export interface LiveCommentCreateReqVO  {
+export interface LiveCommentCreateReqVO {
     livestreamId?: any
     content?: string
     pin?: boolean
     userId?: number
 }
-export interface LiveStreamCreateReqVO  {
+export interface LiveStreamCreateReqVO {
     title?: string
     startDate?: any
+}
+export interface PayloadSendSignal {
+    localUuid?: any
+    displayName?: string
+    dest?: any
+    sdp?: any
+    ice?: any
 }

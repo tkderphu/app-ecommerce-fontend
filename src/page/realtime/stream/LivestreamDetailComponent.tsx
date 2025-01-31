@@ -1,7 +1,7 @@
 import { CompatClient, Stomp } from "@stomp/stompjs"
 import { useEffect, useState, useCallback, VideoHTMLAttributes, useRef, Fragment } from "react"
 import { useParams } from "react-router-dom"
-import { LiveCommentCreateReqVO } from "../record/record.req.vo"
+import { LiveCommentCreateReqVO, PayloadSendSignal } from "../record/record.req.vo"
 import { LiveCommentRespVO, LivestreamDetailRespVO, LivestreamRespVO } from "../record/record.resp.vo"
 import liveCommentService from "../service/live.comment.service"
 import livestreamService from "../service/livestream.service"
@@ -30,11 +30,21 @@ export function Video({ srcObject, ...props }: PropsType) {
     return <video ref={refVideo} {...props} />
 }
 
-
-
+const ICE_SERVERS = {
+    iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        {
+            urls: 'turn:viosmash.site:3478',
+            username: 'test',
+            credential: 'test'
+        }
+    ]
+}
 function LivestreamDetailComponent() {
-
     const [localStream, setLocalStream] = useState<MediaStream>()
+    const stompClientRef = useRef<CompatClient>()
+    const peerConnectionRef = useRef<RTCPeerConnection | undefined>()
+
     const [livestream, setLivestream] = useState<LivestreamDetailRespVO>()
     const { liveId } = useParams()
     const [liveCommentReq, setLiveCommentReq] = useState<LiveCommentCreateReqVO>({
@@ -43,18 +53,29 @@ function LivestreamDetailComponent() {
     })
     const messageRef = useRef<HTMLInputElement>(null)
     const commentsEndRef = useRef<HTMLDivElement>(null);
-    const [stompClient, setStompClient] = useState<CompatClient>()
+    // const [stompClient, setStompClient] = useState<CompatClient>()
     const [comments, setComments] = useState<LiveCommentRespVO[]>([])
-    const [liveMedia, setLiveMedia] = useState<Map<any, MediaStream>>()
+
+
+
+    
     //get stompClient
     useEffect(() => {
         const stompClient = Stomp.over(new SockJS(`${BASE_URL}/ws`));
         stompClient.connect(headers, (frame: any) => {
-            stompClient.subscribe(`/topic/livestream/${liveId}`, (payload: any) => {
+            stompClient.subscribe(`/topic/livestream/${liveId}/comments`, (payload: any) => {
                 setComments((prev) => [...prev, JSON.parse(payload.body)])
             })
+            stompClient.subscribe(`/topic/livestream/${liveId}`, (payload: any) => {
+            })
+            const signalPayload: PayloadSendSignal = {
+                dest: "all",
+                localUuid: getToken()?.userId
+            }
+            stompClient.send("/app/livestream/" + liveId, headers, JSON.stringify(signalPayload))
         })
-        setStompClient(stompClient)
+        stompClientRef.current = stompClient
+
 
         return () => {
             if (stompClient) {
@@ -63,6 +84,9 @@ function LivestreamDetailComponent() {
         }
 
     }, [])
+
+
+    
 
 
     useEffect(() => {
@@ -88,34 +112,26 @@ function LivestreamDetailComponent() {
                     alert("Chưa bắt đầu hoặc đã đóng")
                     window.history.back()
                 } else {
-                    // if(getToken()?.userId === rq.hostOwner?.userId) {
-                    //     navigator.mediaDevices.getUserMedia({
-                    //         video: true,
-                    //         audio: true,
-                    //     }).then(stream => {
-                    //         const map = new Map<any, MediaStream>()
-                    //         map.set(stream.)
-                    //     }).catch(err => {
-                    //         console.error("GET MEDIA ERROR")
-                    //     })
-                    // }
+                    if (getToken()?.userId === rq.hostOwner?.id) {
+                        navigator.mediaDevices.getUserMedia({
+                            video: true,
+                            audio: true,
+                        }).then(stream => {
+                            peerConnectionRef.current = new RTCPeerConnection(ICE_SERVERS)
+                            localStream?.getTracks().forEach(track => {
+                                peerConnectionRef.current?.addTrack(track, localStream)
+                            })
+                           setLocalStream(stream)
+                        }).catch(err => {
+                            console.error("GET MEDIA ERROR")
+                        })
+                    }
                     setLivestream(rq)
                 }
             }
         })
-    }, [])
-    /**Get user media */
-    useEffect(() => {
-        navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true,
-        }).then(stream => {
-            setLocalStream(stream)
-        }).catch(err => {
-            console.error("GET MEDIA ERROR")
-        })
-    }, [])
 
+    }, [])
     //scroll to end
     useEffect(() => {
         if (commentsEndRef.current) {
@@ -128,9 +144,17 @@ function LivestreamDetailComponent() {
         }
     }, [comments])
 
+
+
+
+
     return (
 
         <Fragment>
+            <button onClick={() => {
+                console.log("Local: ", localStream);
+                
+            }}>Click</button>
             <div className="container-fluid">
                 <div className="d-flex justify-content-around flex-wrap">
                     <a href="#">{livestream?.hostOwner?.aliasName}</a>
@@ -138,9 +162,9 @@ function LivestreamDetailComponent() {
                 </div>
                 <div className="row">
 
-                    <div className="col-lg-8 col-md-7 col-sm-12 mb-5">
+                    {localStream ? (<div className="col-lg-8 col-md-7 col-sm-12 mb-5">
                         <div className="video-container">
-                            <Video id="local-video" autoPlay playsInline srcObject={localStream} />
+                            <Video id="local-video" autoPlay playsInline srcObject={localStream } />
                             <div className="d-flex justify-content-around flex-wrap">
                                 {livestream?.liveProducts?.map(product => {
                                     return (
@@ -168,7 +192,7 @@ function LivestreamDetailComponent() {
                                 id="fullscreen-button"><i className="bi bi-fullscreen"></i></button>
                         </div>
 
-                    </div>
+                    </div>) : (<h3 className="mb-3 mt-3 " style={{ color: "red" }}>Người bán hàng đã tắt camera</h3>)}
 
                     <div className="col-lg-4 col-md-5 col-sm-12 comments-section" id="comments-section">
                         {comments.map(res => {

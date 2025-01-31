@@ -26,7 +26,7 @@ export interface WalletRespVO {
  */
 export interface UserMemberResVO {
     avatar?: string
-    userId?: number
+    id?: number
     aliasName?: string
     fullName?: string
     email?: string
