@@ -70,7 +70,8 @@ function CheckoutPageComponent() {
         const req : any = {
             addressDetails: userAddresses?.filter(re => re.defaultAddress).at(0)?.fullAddress,
             cartIds: cartIds,
-            couponIds: undefined
+            couponIds: undefined,
+            orderPlace: history.state.orderPlace
         }
         let checkWhetherUserSelectMethodPayment = false
         document.querySelectorAll('input[type="radio"][name="payment"]').forEach((e: any) => {

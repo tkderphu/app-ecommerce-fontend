@@ -220,8 +220,12 @@ function ShopDetailsComponent(props: Props) {
                                                             if (res.data.code != 200) {
                                                                 alert(res.data.message)
                                                             } else {
-                                                                window.history.pushState({ "skuId": cartItemReq.productSkuId }, "", "/cart")
-                                                                window.open("/cart", '', "_blank")
+                                                                if(props.productId) {
+                                                                    window.open(`/cart?skuId=${cartItemReq.productSkuId}&orderPlace=${'LIVESTREAM'}`, '', "_blank")
+                                                                } else {
+                                                                    window.history.pushState({ "skuId": cartItemReq.productSkuId, "orderPlace": "NORMAL"}, "", "/cart")
+                                                                    window.location.href = "/cart"
+                                                                }
                                                             }
                                                         }).catch(err => {
                                                             alert("Lỗi hệ thống")

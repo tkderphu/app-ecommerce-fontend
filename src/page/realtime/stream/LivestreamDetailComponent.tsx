@@ -61,36 +61,7 @@ function LivestreamDetailComponent() {
     
     //get stompClient
     useEffect(() => {
-        const stompClient = Stomp.over(new SockJS(`${BASE_URL}/ws`));
-        stompClient.connect(headers, (frame: any) => {
-            stompClient.subscribe(`/topic/livestream/${liveId}/comments`, (payload: any) => {
-                setComments((prev) => [...prev, JSON.parse(payload.body)])
-            })
-            stompClient.subscribe(`/topic/livestream/${liveId}`, (payload: any) => {
-            })
-            const signalPayload: PayloadSendSignal = {
-                dest: "all",
-                localUuid: getToken()?.userId
-            }
-            stompClient.send("/app/livestream/" + liveId, headers, JSON.stringify(signalPayload))
-        })
-        stompClientRef.current = stompClient
 
-
-        return () => {
-            if (stompClient) {
-                stompClient.deactivate()
-            }
-        }
-
-    }, [])
-
-
-    
-
-
-    useEffect(() => {
-        //get all comment from livestream
         liveCommentService.getListComment(liveId).then(res => {
             if (res.data.code === 200) {
                 setComments(res.data.data)
@@ -100,10 +71,8 @@ function LivestreamDetailComponent() {
         }).catch(err => {
             console.log("loi he thong: ", err)
         })
-    }, [])
 
-    //get livestream
-    useEffect(() => {
+
         livestreamService.getLivestream(liveId).then(res => {
             if (res.data.code == 200) {
                 const rq: LivestreamRespVO = res.data.data
@@ -130,8 +99,39 @@ function LivestreamDetailComponent() {
                 }
             }
         })
+        const stompClient = Stomp.over(new SockJS(`${BASE_URL}/ws`));
+        stompClient.connect(headers, (frame: any) => {
+            stompClient.subscribe(`/topic/livestream/${liveId}/comments`, (payload: any) => {
+                setComments((prev) => [...prev, JSON.parse(payload.body)])
+            })
+            stompClient.subscribe(`/topic/livestream/${liveId}`, (payload: any) => {
+                
+
+            })
+            const signalPayload: PayloadSendSignal = {
+                dest: "all",
+                localUuid: getToken()?.userId
+            }
+            stompClient.send("/app/livestream/" + liveId, headers, JSON.stringify(signalPayload))
+        })
+        stompClientRef.current = stompClient
+
+
+
+        return () => {
+            if (stompClient) {
+                stompClient.deactivate()
+                peerConnectionRef.current?.close()
+                localStream?.clone()
+            }
+        }
 
     }, [])
+
+
+    
+
+
     //scroll to end
     useEffect(() => {
         if (commentsEndRef.current) {
@@ -162,7 +162,7 @@ function LivestreamDetailComponent() {
                 </div>
                 <div className="row">
 
-                    {localStream ? (<div className="col-lg-8 col-md-7 col-sm-12 mb-5">
+                    {!localStream ? (<div className="col-lg-8 col-md-7 col-sm-12 mb-5">
                         <div className="video-container">
                             <Video id="local-video" autoPlay playsInline srcObject={localStream } />
                             <div className="d-flex justify-content-around flex-wrap">

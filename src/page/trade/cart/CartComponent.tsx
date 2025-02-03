@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { CommonResult, mapToObject } from "../../../common/common"
 import ModalComponent from "../../../component/ModalComponent"
 import FooterComponent from "../../../layout/FooterComponent"
@@ -13,7 +13,7 @@ function CartPageComponent() {
     const [itemMap, setItemMap] = useState<Map<SellerRespVO, Array<CartItemRespVO>>>(new Map<SellerRespVO, Array<CartItemRespVO>>())
     const [selectedItems, setSelectedItems] = useState<Map<number | undefined, any>>(new Map<number | undefined, any>);
 
-    
+    const queryParams = new URLSearchParams(window.location.search)
 
     // Handle select/deselect all items for a specific seller
     const handleSelectAll = (cartResp: any, check: any) => {
@@ -72,21 +72,28 @@ function CartPageComponent() {
         }
     }
 
+    if (itemMap.size > 0 && queryParams.get('skuId') != null) {
+        history.pushState({ "itemMap": itemMap, "orderPlace": (queryParams.get("orderPlace") != null ? queryParams.get("orderPlace") : "NORMAL") }, "", "/checkout")
+        location.href = "/checkout"
+    }
 
     useEffect(() => {
+
         cartService.getAllItemFromCart().then(res => {
             if (res.data.code === 200) {
                 setCommonResult(res.data)
 
                 const state = window.history.state
+
+                const skuId = Number.parseInt(state.skuId ? state.skuId : queryParams.get("skuId"))
                 //@ts-ignore
                 const carts: Array<CartRespVO> = res.data.data
-                if(state.skuId) {
+                if (skuId) {
                     carts?.forEach(cart => {
                         const item = cart.cartItems?.filter(item => {
-                            return item.product?.id === state.skuId
+                            return item.product?.id === skuId
                         })?.at(0)
-                        if(item) {
+                        if (item) {
                             handleSelectItem(cart, item, true)
                         }
                     })
@@ -96,7 +103,7 @@ function CartPageComponent() {
             }
         })
 
-       
+
     }, [])
     return (
         <div>
@@ -124,7 +131,7 @@ function CartPageComponent() {
                                             <td colSpan={3}><a className="border-secondary rounded-pill btn"
                                                 onClick={() => {
                                                     const path = "/shop?seller=" + cartResp.seller?.shopName
-                                                    history.pushState({"sellerId": cartResp.seller?.id}, "", path)
+                                                    history.pushState({ "sellerId": cartResp.seller?.id }, "", path)
                                                     window.location.href = path
                                                 }}
                                             >
@@ -219,17 +226,17 @@ function CartPageComponent() {
 
                                     </div>
                                 </div>
-                                <a href="javascript:(0)" 
+                                <a href="javascript:(0)"
                                     onClick={() => {
                                         let check = false
                                         itemMap.forEach(item => {
-                                            if(item.length > 0) {
+                                            if (item.length > 0) {
                                                 check = true
                                             }
                                         })
-                                        if(check) {
+                                        if (check) {
                                             // console.log(itemM)
-                                            history.pushState({"itemMap": itemMap}, "", "/checkout")
+                                            history.pushState({ "itemMap": itemMap, "orderPlace": (queryParams.get("orderPlace") != null ? queryParams.get("orderPlace") : "NORMAL") }, "", "/checkout")
                                             location.href = "/checkout"
                                         } else {
                                             alert("Vui lòng chọn sản phẩm")
