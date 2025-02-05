@@ -1,10 +1,4 @@
-// Authentication
-export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
-export const REGISTER_ERROR = 'REGISTER_ERROR'
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const LOGIN_ERROR = 'LOGIN_ERROR';
-export const REDIRECTED = 'REDIRECTED';
-export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+
 
 //cart
 export const ADD_PRODUCT_TO_CART_SUCCESS = "ADD_NEW_PRODUCT_TO_CART_SUCCESS"
@@ -36,15 +30,6 @@ export const UPDATE_PROFILE_PICTURE_BEGIN = "UPDATE_PROFILE_PICTURE_BEGIN"
 
 
 //comment
-export const CREATE_COMMENT_BEGIN = "CREATE_COMMENT_BEGIN"
-export const CREATE_COMMENT_SUCCESS = ""
-export const CREATE_COMMENT_ERROR = ""
-export const UPDATE_COMMENT_BEGIN = ""
-export const UPDATE_COMMENT_SUCCESS= ""
-export const UPDATE_COMMENT_ERROR = ""
-export const REMOVE_COMMENT_BEGIN = ""
-export const REMOVE_COMMENT_SUCCESS = ""
-export const REMOVE_COMMENT_ERROR = ""
 
 
 //payment

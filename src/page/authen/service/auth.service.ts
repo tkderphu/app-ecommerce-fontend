@@ -8,6 +8,9 @@ class AuthService {
     login(req: any) {
         return Request.call(PATH + "/login", "post", req)
     }
+    logout()  {
+        return Request.call(PATH + "/login", "get")
+    }
     
 }
 export default new AuthService()
