@@ -9,3 +9,11 @@ export interface Error {
 export interface Response {
     payload: CommonResult<any>
 }
+export const commonProperties : any = {
+    loading: false,
+    hasError: false,
+    error: '',
+    message: '',
+    path: '',
+    status: ''   
+}

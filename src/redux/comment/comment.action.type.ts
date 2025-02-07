@@ -1,5 +1,9 @@
 
 
+
+export const FETCH_COMMENT_BEGIN = ""
+export const FETCH_COMMENT_SUCCESS = ""
+export const FETCH_COMMENT_FAILURE = ""
 export const CREATE_COMMENT_BEGIN = "CREATE_COMMENT_BEGIN"
 export const CREATE_COMMENT_SUCCESS = ""
 export const CREATE_COMMENT_ERROR = ""
